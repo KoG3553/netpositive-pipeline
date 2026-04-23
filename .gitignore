@@ -1,0 +1,12 @@
+# Secrets
+.env
+
+# Dependencies
+node_modules/
+
+# Data (don't commit your ideas.json — it'll be different on each PC)
+ideas.json
+
+# OS junk
+.DS_Store
+Thumbs.db
