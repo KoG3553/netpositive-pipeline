@@ -12,6 +12,15 @@
   .brand-line { width: 3px; height: 28px; background: #22C55E; border-radius: 2px; }
   h1 { font-size: 22px; font-weight: 600; color: #F9FAFB; }
   .subtitle { font-size: 13px; color: #9CA3AF; margin-bottom: 1.5rem; padding-left: 13px; }
+  .canva-status { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 18px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .canva-status.connected { border-left: 3px solid #22C55E; }
+  .canva-status.disconnected { border-left: 3px solid #F59E0B; }
+  .canva-status-text { font-size: 13px; color: #E5E7EB; }
+  .canva-status-text strong { color: #F9FAFB; }
+  .canva-status-text .muted { color: #9CA3AF; font-size: 12px; }
+  .btn-canva { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; }
+  .btn-canva-connect { background: #8B3DFF; color: #fff; }
+  .btn-canva-disconnect { background: transparent; color: #9CA3AF; border: 1px solid #374151; }
   .tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid #1F2937; }
   .tab { font-size: 13px; padding: 10px 18px; border: none; background: none; cursor: pointer; color: #9CA3AF; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; }
   .tab.active { color: #F9FAFB; border-bottom: 2px solid #22C55E; }
@@ -22,35 +31,38 @@
   label { display: block; font-size: 12px; color: #9CA3AF; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
   select, input[type="text"], input[type="password"], textarea {
     width: 100%; padding: 9px 12px; border: 1px solid #374151; border-radius: 8px;
-    font-size: 13px; background: #111827; color: #E5E7EB; outline: none;
-    font-family: inherit;
+    font-size: 13px; background: #111827; color: #E5E7EB; outline: none; font-family: inherit;
   }
   select:focus, input:focus, textarea:focus { border-color: #22C55E; }
   textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-  .btn-primary { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; background: #22C55E; color: #0B0F14; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 1rem; transition: opacity 0.15s; }
+  .btn-primary { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; background: #22C55E; color: #0B0F14; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 1rem; }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-primary:hover:not(:disabled) { opacity: 0.9; }
   .status { font-size: 12px; color: #9CA3AF; margin-bottom: 1rem; min-height: 18px; }
   .status.error { color: #F87171; }
   .status.ok { color: #22C55E; }
-  .idea-card { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 12px; transition: border-color 0.15s; }
+  .idea-card { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 12px; }
   .idea-card.approved { border-color: #22C55E; border-left: 3px solid #22C55E; }
   .idea-card.skipped { opacity: 0.35; }
+  .idea-card.designed { border-left: 3px solid #8B3DFF; }
   .idea-meta { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
   .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
   .badge-pinterest { background: #7F1D1D; color: #FCA5A5; }
   .badge-reel { background: #1E3A8A; color: #93C5FD; }
   .badge-both { background: #14532D; color: #86EFAC; }
   .badge-type { background: #1F2937; color: #9CA3AF; }
+  .badge-designed { background: #4C1D95; color: #C4B5FD; }
   .idea-topic { font-size: 14px; font-weight: 600; color: #F9FAFB; margin-bottom: 8px; }
   .idea-hook { font-size: 16px; color: #F9FAFB; border-left: 3px solid #22C55E; padding-left: 12px; margin-bottom: 12px; line-height: 1.4; font-weight: 500; }
   .idea-title { font-size: 13px; color: #D1D5DB; font-weight: 600; margin-bottom: 6px; }
   .idea-description { font-size: 13px; color: #9CA3AF; line-height: 1.6; margin-bottom: 10px; }
   .idea-visual { font-size: 12px; color: #9CA3AF; background: #0B0F14; border: 1px solid #1F2937; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
-  .idea-visual strong { color: #22C55E; font-weight: 600; }
+  .idea-visual strong { color: #22C55E; }
   .idea-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-approve { font-size: 12px; padding: 6px 16px; background: transparent; color: #22C55E; border: 1px solid #22C55E; border-radius: 6px; cursor: pointer; font-weight: 600; }
   .btn-approve.approved { background: #22C55E; color: #0B0F14; }
+  .btn-design { font-size: 12px; padding: 6px 16px; background: transparent; color: #C4B5FD; border: 1px solid #8B3DFF; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .btn-design.designed { background: #8B3DFF; color: #fff; }
   .btn-sm { font-size: 12px; padding: 6px 14px; background: transparent; color: #9CA3AF; border: 1px solid #374151; border-radius: 6px; cursor: pointer; }
   .btn-sm:hover { border-color: #6B7280; color: #E5E7EB; }
   .edit-box { background: #0B0F14; border: 1px solid #1F2937; border-radius: 8px; padding: 1rem; margin-top: 10px; }
@@ -63,7 +75,15 @@
   .stat-label { font-size: 11px; color: #9CA3AF; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .queue-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
   .empty { text-align: center; padding: 3rem; color: #6B7280; font-size: 14px; }
-  .status-banner { background: #111827; border: 1px solid #1F2937; border-left: 3px solid #22C55E; border-radius: 8px; padding: 12px 16px; margin-bottom: 1.25rem; font-size: 12px; color: #9CA3AF; line-height: 1.5; }
+  .design-link { font-size: 12px; color: #C4B5FD; text-decoration: none; }
+  .design-link:hover { color: #DDD6FE; text-decoration: underline; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 2rem; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 2rem; max-width: 500px; width: 100%; }
+  .modal h3 { color: #F9FAFB; font-size: 18px; margin-bottom: 12px; }
+  .modal p { color: #9CA3AF; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .modal label { color: #9CA3AF; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
 </style>
 </head>
 <body>
@@ -74,15 +94,24 @@
   </div>
   <p class="subtitle">AI generates → you approve → Canva creates → Pinterest posts</p>
 
+  <div id="canva-status" class="canva-status disconnected">
+    <div class="canva-status-text">
+      <strong>Canva:</strong> <span id="canva-status-label">Not connected</span>
+      <div class="muted" id="canva-template-info"></div>
+    </div>
+    <div>
+      <button class="btn-canva btn-canva-connect" id="btn-connect-canva" onclick="connectCanva()">Connect Canva</button>
+      <button class="btn-canva btn-canva-disconnect" id="btn-disconnect-canva" onclick="disconnectCanva()" style="display:none">Disconnect</button>
+      <button class="btn-canva btn-canva-disconnect" onclick="openTemplateModal()" style="display:inline-block">Set template</button>
+    </div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" onclick="switchTab('generate')">Generate</button>
     <button class="tab" onclick="switchTab('queue')">Queue <span id="queue-count"></span></button>
   </div>
 
   <div id="tab-generate" class="section active">
-    <div class="status-banner">
-      <strong style="color:#22C55E">Phase 1:</strong> Claude idea generation active. Phases 2-5 coming: Google Sheets logging → Canva auto-design → Pinterest auto-post → Windsor feedback loop.
-    </div>
     <div class="controls">
       <div>
         <label>Platform</label>
@@ -119,7 +148,7 @@
       </div>
     </div>
     <label>Brand notes (optional — steer the AI)</label>
-    <textarea id="brand-notes" placeholder="e.g. Focus on behavior not budgeting. Never use the word 'budget'. Target 25-40 year olds paid biweekly."></textarea>
+    <textarea id="brand-notes" placeholder="e.g. Focus on behavior not budgeting. Never use the word 'budget'."></textarea>
     <div style="height:12px"></div>
     <button class="btn-primary" id="gen-btn" onclick="generateIdeas()">Generate ideas</button>
     <div class="status" id="status"></div>
@@ -130,7 +159,7 @@
     <div class="queue-stats">
       <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total</div></div>
       <div class="stat"><div class="stat-num" id="s-approved">0</div><div class="stat-label">Approved</div></div>
-      <div class="stat"><div class="stat-num" id="s-skipped">0</div><div class="stat-label">Skipped</div></div>
+      <div class="stat"><div class="stat-num" id="s-designed">0</div><div class="stat-label">Designed</div></div>
       <div class="stat"><div class="stat-num" id="s-pending">0</div><div class="stat-label">Pending</div></div>
     </div>
     <div class="queue-actions">
@@ -141,9 +170,24 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="template-modal">
+  <div class="modal">
+    <h3>Set Brand Template ID</h3>
+    <p>Paste your Canva Brand Template ID. You can find it in the Canva URL when viewing a brand template — usually starts with <code>EAH</code> or <code>BAF</code>.</p>
+    <label>Brand Template ID</label>
+    <input type="text" id="template-id-input" placeholder="EAHIMaRO6Hs" />
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeTemplateModal()">Cancel</button>
+      <button class="btn-save" onclick="saveTemplateId()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const API = 'http://localhost:3000/api';
+const API = '/api';
 let allIdeas = [];
+let canvaConnected = false;
+let brandTemplateId = localStorage.getItem('npm_brand_template_id') || '';
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t, i) => {
@@ -158,6 +202,57 @@ function setStatus(msg, type) {
   const el = document.getElementById('status');
   el.textContent = msg;
   el.className = 'status' + (type ? ' ' + type : '');
+}
+
+async function loadHealth() {
+  try {
+    const res = await fetch(API + '/health');
+    const data = await res.json();
+    canvaConnected = !!data.canva_connected;
+    updateCanvaStatus();
+  } catch (e) {}
+}
+
+function updateCanvaStatus() {
+  const banner = document.getElementById('canva-status');
+  const label = document.getElementById('canva-status-label');
+  const info = document.getElementById('canva-template-info');
+  const connectBtn = document.getElementById('btn-connect-canva');
+  const disconnectBtn = document.getElementById('btn-disconnect-canva');
+
+  if (canvaConnected) {
+    banner.className = 'canva-status connected';
+    label.textContent = 'Connected';
+    connectBtn.style.display = 'none';
+    disconnectBtn.style.display = 'inline-block';
+  } else {
+    banner.className = 'canva-status disconnected';
+    label.textContent = 'Not connected';
+    connectBtn.style.display = 'inline-block';
+    disconnectBtn.style.display = 'none';
+  }
+  info.textContent = brandTemplateId ? `Template ID: ${brandTemplateId}` : 'No template ID set yet — click "Set template"';
+}
+
+function connectCanva() { window.location.href = '/oauth/canva/start'; }
+
+async function disconnectCanva() {
+  if (!confirm('Disconnect Canva?')) return;
+  await fetch(API + '/canva/disconnect', { method: 'POST' });
+  canvaConnected = false;
+  updateCanvaStatus();
+}
+
+function openTemplateModal() {
+  document.getElementById('template-id-input').value = brandTemplateId;
+  document.getElementById('template-modal').classList.add('active');
+}
+function closeTemplateModal() { document.getElementById('template-modal').classList.remove('active'); }
+function saveTemplateId() {
+  brandTemplateId = document.getElementById('template-id-input').value.trim();
+  localStorage.setItem('npm_brand_template_id', brandTemplateId);
+  updateCanvaStatus();
+  closeTemplateModal();
 }
 
 async function loadIdeas() {
@@ -213,18 +308,25 @@ function renderIdeas(ideas) {
 
 function makeCard(idea) {
   const div = document.createElement('div');
-  div.className = 'idea-card' + (idea.status === 'approved' ? ' approved' : idea.status === 'skipped' ? ' skipped' : '');
+  let cls = 'idea-card';
+  if (idea.status === 'approved') cls += ' approved';
+  if (idea.status === 'skipped') cls += ' skipped';
+  if (idea.canva_design_id) cls += ' designed';
+  div.className = cls;
   div.id = 'card-' + idea.id;
 
   const pClass = { Pinterest: 'badge-pinterest', Reel: 'badge-reel', Both: 'badge-both' }[idea.platform] || 'badge-pinterest';
   const typeLabel = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle' }[idea.content_type] || idea.content_type;
   const approveClass = idea.status === 'approved' ? 'btn-approve approved' : 'btn-approve';
   const approveLabel = idea.status === 'approved' ? 'approved ✓' : 'approve';
+  const designedBadge = idea.canva_design_id ? '<span class="badge badge-designed">designed</span>' : '';
+  const designLink = idea.canva_design_url ? `<a class="design-link" href="${idea.canva_design_url}" target="_blank">→ open in Canva</a>` : '';
 
   div.innerHTML = `
     <div class="idea-meta">
       <span class="badge ${pClass}">${idea.platform}</span>
       <span class="badge badge-type">${typeLabel}</span>
+      ${designedBadge}
     </div>
     <div class="idea-topic">${escapeHtml(idea.topic)}</div>
     <div class="idea-hook">${escapeHtml(idea.hook)}</div>
@@ -233,17 +335,16 @@ function makeCard(idea) {
     <div class="idea-visual"><strong>Canva brief:</strong> ${escapeHtml(idea.visual_brief)}</div>
     <div class="idea-actions">
       <button class="${approveClass}" onclick="toggleApprove(${idea.id})">${approveLabel}</button>
+      <button class="btn-design" onclick="createDesign(${idea.id})">${idea.canva_design_id ? 're-create design' : 'create design'}</button>
       <button class="btn-sm" onclick="regenerate(${idea.id})">regenerate</button>
       <button class="btn-sm" onclick="toggleEdit(${idea.id})">edit</button>
       <button class="btn-sm" onclick="skipIdea(${idea.id})">skip</button>
+      ${designLink}
     </div>
     <div id="edit-${idea.id}" style="display:none;" class="edit-box">
-      <label>Hook</label>
-      <input type="text" id="hook-${idea.id}" value="${escapeAttr(idea.hook)}" />
-      <label>Title</label>
-      <input type="text" id="title-${idea.id}" value="${escapeAttr(idea.title || '')}" />
-      <label>Description</label>
-      <textarea id="description-${idea.id}">${escapeHtml(idea.description)}</textarea>
+      <label>Hook</label><input type="text" id="hook-${idea.id}" value="${escapeAttr(idea.hook)}" />
+      <label>Title</label><input type="text" id="title-${idea.id}" value="${escapeAttr(idea.title || '')}" />
+      <label>Description</label><textarea id="description-${idea.id}">${escapeHtml(idea.description)}</textarea>
       <button class="btn-save" onclick="saveEdit(${idea.id})">save changes</button>
     </div>
   `;
@@ -253,15 +354,40 @@ function makeCard(idea) {
 function escapeHtml(s) { return String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
 
+async function createDesign(id) {
+  if (!canvaConnected) { setStatus('Connect Canva first.', 'error'); return; }
+  if (!brandTemplateId) { setStatus('Set a Brand Template ID first.', 'error'); return; }
+
+  const idea = allIdeas.find(i => i.id === id);
+  if (!idea) return;
+
+  setStatus(`Creating Canva design for: ${idea.topic}...`);
+
+  try {
+    const res = await fetch(API + '/canva/autofill', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brand_template_id: brandTemplateId, idea_id: id })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(JSON.stringify(data.error));
+
+    // Refresh idea data
+    const refreshed = await fetch(API + '/ideas').then(r => r.json());
+    allIdeas = refreshed.ideas;
+    refreshCard(allIdeas.find(i => i.id === id));
+    updateCounts();
+    setStatus('Design created. Job status: ' + (data.data?.job?.status || 'submitted'), 'ok');
+  } catch (e) {
+    setStatus('Design error: ' + e.message, 'error');
+  }
+}
+
 async function toggleApprove(id) {
   const idea = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'approved' ? 'pending' : 'approved';
-  await fetch(`${API}/ideas/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: newStatus })
-  });
+  await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
   idea.status = newStatus;
   refreshCard(idea);
   updateCounts();
@@ -271,11 +397,7 @@ async function skipIdea(id) {
   const idea = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'skipped' ? 'pending' : 'skipped';
-  await fetch(`${API}/ideas/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: newStatus })
-  });
+  await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
   idea.status = newStatus;
   refreshCard(idea);
   updateCounts();
@@ -292,17 +414,14 @@ async function regenerate(id) {
       if (idx >= 0) allIdeas[idx] = data.idea;
       refreshCard(data.idea);
     }
-  } catch (e) {
-    setStatus('Regenerate failed: ' + e.message, 'error');
-  }
+  } catch (e) { setStatus('Regenerate failed: ' + e.message, 'error'); }
   if (card) card.style.opacity = '1';
 }
 
 function refreshCard(idea) {
   const oldCard = document.getElementById('card-' + idea.id);
   if (!oldCard) return;
-  const newCard = makeCard(idea);
-  oldCard.replaceWith(newCard);
+  oldCard.replaceWith(makeCard(idea));
 }
 
 function toggleEdit(id) {
@@ -316,23 +435,19 @@ async function saveEdit(id) {
   idea.hook = document.getElementById('hook-' + id).value;
   idea.title = document.getElementById('title-' + id).value;
   idea.description = document.getElementById('description-' + id).value;
-  await fetch(`${API}/ideas/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ hook: idea.hook, title: idea.title, description: idea.description })
-  });
+  await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hook: idea.hook, title: idea.title, description: idea.description }) });
   refreshCard(idea);
 }
 
 function updateCounts() {
   const total = allIdeas.length;
   const approved = allIdeas.filter(i => i.status === 'approved').length;
-  const skipped = allIdeas.filter(i => i.status === 'skipped').length;
+  const designed = allIdeas.filter(i => i.canva_design_id).length;
   const pending = allIdeas.filter(i => i.status === 'pending').length;
   document.getElementById('queue-count').textContent = total ? `(${total})` : '';
   document.getElementById('s-total').textContent = total;
   document.getElementById('s-approved').textContent = approved;
-  document.getElementById('s-skipped').textContent = skipped;
+  document.getElementById('s-designed').textContent = designed;
   document.getElementById('s-pending').textContent = pending;
 }
 
@@ -352,7 +467,7 @@ function renderQueue() {
 function exportCSV() {
   const approved = allIdeas.filter(i => i.status === 'approved');
   if (!approved.length) { alert('No approved ideas to export.'); return; }
-  const headers = ['topic', 'hook', 'title', 'description', 'visual_brief', 'platform', 'content_type', 'status'];
+  const headers = ['topic', 'hook', 'title', 'description', 'visual_brief', 'platform', 'content_type', 'status', 'canva_design_url'];
   const rows = approved.map(i => headers.map(k => `"${String(i[k] || '').replace(/"/g, '""')}"`).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const a = document.createElement('a');
@@ -370,6 +485,7 @@ async function clearQueue() {
   updateCounts();
 }
 
+loadHealth();
 loadIdeas();
 </script>
 </body>
