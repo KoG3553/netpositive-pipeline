@@ -1,5 +1,5 @@
 // server.js — Net Positive Method Content Pipeline
-// Phase 3: Canva OAuth + Design Discovery + Auto-Design
+// Phase 3: Canva OAuth + Auto-polling autofill jobs
 
 require('dotenv').config();
 const express = require('express');
@@ -16,6 +16,9 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+// Use the latest Claude model
+const CLAUDE_MODEL = 'claude-sonnet-4-5';
+
 // Canva config
 const CANVA_CLIENT_ID = process.env.CANVA_CLIENT_ID;
 const CANVA_CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET;
@@ -28,21 +31,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// ---------------------------------------------------------------
-// File paths for persistent storage
-// ---------------------------------------------------------------
 const DATA_FILE = path.join(__dirname, 'ideas.json');
-const TOKEN_FILE = path.join(__dirname, '.canva-tokens.json'); // gitignored
-const PKCE_FILE = path.join(__dirname, '.canva-pkce.json');   // gitignored
+const TOKEN_FILE = path.join(__dirname, '.canva-tokens.json');
+const PKCE_FILE = path.join(__dirname, '.canva-pkce.json');
 
 // ---------------------------------------------------------------
-// Ideas storage (Phase 2)
+// Persistence
 // ---------------------------------------------------------------
 function loadIdeas() {
   try {
     if (fs.existsSync(DATA_FILE)) {
-      const raw = fs.readFileSync(DATA_FILE, 'utf8');
-      return JSON.parse(raw);
+      return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
     }
   } catch (err) {
     console.error('Could not load ideas.json:', err.message);
@@ -60,9 +59,6 @@ function saveIdeas() {
 
 let ideasStore = loadIdeas();
 
-// ---------------------------------------------------------------
-// Canva token storage
-// ---------------------------------------------------------------
 function loadTokens() {
   try {
     if (fs.existsSync(TOKEN_FILE)) {
@@ -79,7 +75,7 @@ function saveTokens(tokens) {
 let canvaTokens = loadTokens();
 
 // ---------------------------------------------------------------
-// PKCE helpers (security for OAuth 2.0)
+// PKCE helpers
 // ---------------------------------------------------------------
 function generatePKCE() {
   const verifier = crypto.randomBytes(32).toString('base64url');
@@ -98,7 +94,6 @@ async function ensureValidToken() {
     return canvaTokens.access_token;
   }
 
-  // Refresh
   const basicAuth = Buffer.from(`${CANVA_CLIENT_ID}:${CANVA_CLIENT_SECRET}`).toString('base64');
   const res = await fetch(CANVA_TOKEN_URL, {
     method: 'POST',
@@ -128,7 +123,7 @@ async function ensureValidToken() {
 }
 
 // ---------------------------------------------------------------
-// API ROUTES — Health
+// Health
 // ---------------------------------------------------------------
 app.get('/api/health', (req, res) => {
   res.json({
@@ -139,7 +134,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// API ROUTES — Canva OAuth
+// Canva OAuth
 // ---------------------------------------------------------------
 app.get('/oauth/canva/start', (req, res) => {
   if (!CANVA_CLIENT_ID || !CANVA_REDIRECT_URI) {
@@ -148,8 +143,6 @@ app.get('/oauth/canva/start', (req, res) => {
 
   const { verifier, challenge } = generatePKCE();
   const state = crypto.randomBytes(16).toString('hex');
-
-  // Save verifier so we can use it in the callback
   fs.writeFileSync(PKCE_FILE, JSON.stringify({ verifier, state }, null, 2));
 
   const scopes = [
@@ -177,20 +170,12 @@ app.get('/oauth/canva/start', (req, res) => {
 
 app.get('/oauth/canva/callback', async (req, res) => {
   const { code, state, error } = req.query;
-
-  if (error) {
-    return res.send(`<h2>Canva auth error</h2><pre>${error}</pre><a href="/">Back</a>`);
-  }
-  if (!code) {
-    return res.send('<h2>No code returned</h2><a href="/">Back</a>');
-  }
+  if (error) return res.send(`<h2>Canva auth error</h2><pre>${error}</pre><a href="/">Back</a>`);
+  if (!code) return res.send('<h2>No code returned</h2><a href="/">Back</a>');
 
   let pkce;
-  try {
-    pkce = JSON.parse(fs.readFileSync(PKCE_FILE, 'utf8'));
-  } catch (e) {
-    return res.send('<h2>PKCE state lost. Try connecting again.</h2><a href="/">Back</a>');
-  }
+  try { pkce = JSON.parse(fs.readFileSync(PKCE_FILE, 'utf8')); }
+  catch (e) { return res.send('<h2>PKCE state lost. Try connecting again.</h2><a href="/">Back</a>'); }
 
   if (state !== pkce.state) {
     return res.send('<h2>State mismatch — possible CSRF. Try again.</h2><a href="/">Back</a>');
@@ -245,7 +230,7 @@ app.post('/api/canva/disconnect', (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// API ROUTES — Canva: List user's brand templates
+// Canva: list brand templates
 // ---------------------------------------------------------------
 app.get('/api/canva/brand-templates', async (req, res) => {
   try {
@@ -260,11 +245,11 @@ app.get('/api/canva/brand-templates', async (req, res) => {
   }
 });
 
-// List the user's recent designs (so we can find the master template)
-app.get('/api/canva/designs', async (req, res) => {
+// Inspect a brand template's expected fields
+app.get('/api/canva/brand-templates/:id/dataset', async (req, res) => {
   try {
     const token = await ensureValidToken();
-    const r = await fetch(`${CANVA_API_BASE}/designs?query=&limit=20`, {
+    const r = await fetch(`${CANVA_API_BASE}/brand-templates/${req.params.id}/dataset`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await r.json();
@@ -275,34 +260,36 @@ app.get('/api/canva/designs', async (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// API ROUTES — Canva: Inspect a design's structure (find text box IDs)
+// Canva: AUTOFILL — submit + auto-poll until done
 // ---------------------------------------------------------------
-app.get('/api/canva/design/:id/inspect', async (req, res) => {
-  try {
-    const token = await ensureValidToken();
-    const r = await fetch(`${CANVA_API_BASE}/designs/${req.params.id}`, {
+async function pollJob(token, jobId, maxAttempts = 20) {
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise(r => setTimeout(r, 2000));
+    const r = await fetch(`${CANVA_API_BASE}/autofills/${jobId}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await r.json();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.log(`[poll ${i+1}/${maxAttempts}] job ${jobId} status:`, data.job?.status);
+    if (data.job?.status === 'success' || data.job?.status === 'failed') {
+      return data;
+    }
   }
-});
+  return { job: { status: 'timeout' } };
+}
 
-// ---------------------------------------------------------------
-// API ROUTES — Canva: Create design from brand template autofill
-// ---------------------------------------------------------------
 app.post('/api/canva/autofill', async (req, res) => {
   const { brand_template_id, idea_id } = req.body;
   const idea = ideasStore.find(i => i.id === idea_id);
   if (!idea) return res.status(404).json({ error: 'Idea not found' });
 
+  console.log(`\n[autofill] Submitting for idea ${idea_id}: "${idea.topic}"`);
+  console.log(`[autofill] Template: ${brand_template_id}`);
+  console.log(`[autofill] Data:`, { hook: idea.hook, title: idea.title, description: idea.description });
+
   try {
     const token = await ensureValidToken();
 
-    // Submit autofill job
-    const r = await fetch(`${CANVA_API_BASE}/autofills`, {
+    const submitRes = await fetch(`${CANVA_API_BASE}/autofills`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -318,41 +305,44 @@ app.post('/api/canva/autofill', async (req, res) => {
       })
     });
 
-    const data = await r.json();
-    if (!r.ok) {
-      return res.status(r.status).json({ error: data });
+    const submitData = await submitRes.json();
+    console.log(`[autofill] Submit response:`, JSON.stringify(submitData, null, 2));
+
+    if (!submitRes.ok) {
+      return res.status(submitRes.status).json({ error: submitData });
     }
 
-    // Save the job ID + design ID on the idea
-    idea.canva_job = data.job;
-    if (data.job?.result?.design?.id) {
-      idea.canva_design_id = data.job.result.design.id;
-      idea.canva_design_url = data.job.result.design.url;
+    const jobId = submitData.job?.id;
+    if (!jobId) {
+      return res.json({ success: false, error: 'No job ID returned', data: submitData });
     }
-    saveIdeas();
 
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    // Poll until done
+    const finalResult = await pollJob(token, jobId);
+    console.log(`[autofill] Final status:`, finalResult.job?.status);
 
-// Poll an autofill job
-app.get('/api/canva/autofill/:job_id', async (req, res) => {
-  try {
-    const token = await ensureValidToken();
-    const r = await fetch(`${CANVA_API_BASE}/autofills/${req.params.job_id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await r.json();
-    res.json(data);
+    if (finalResult.job?.status === 'success' && finalResult.job?.result?.design) {
+      idea.canva_design_id = finalResult.job.result.design.id;
+      idea.canva_design_url = finalResult.job.result.design.url;
+      idea.canva_job_status = 'success';
+      saveIdeas();
+    } else {
+      idea.canva_job_status = finalResult.job?.status || 'unknown';
+      if (finalResult.job?.error) {
+        idea.canva_job_error = finalResult.job.error;
+      }
+      saveIdeas();
+    }
+
+    res.json({ success: true, data: finalResult });
   } catch (err) {
+    console.error('[autofill] Error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 // ---------------------------------------------------------------
-// API ROUTES — Existing Phase 1 + 2 endpoints
+// Existing routes (Phase 1 + 2)
 // ---------------------------------------------------------------
 app.post('/api/generate', async (req, res) => {
   const { platform = 'pinterest', count = 10, mix = 'balanced', tone = 'direct', brandNotes = '' } = req.body;
@@ -395,7 +385,7 @@ Each object must have exactly these fields:
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: CLAUDE_MODEL,
       max_tokens: 3000,
       messages: [{ role: 'user', content: prompt }]
     });
@@ -445,7 +435,7 @@ Return ONLY a valid JSON object with the same fields: topic, hook, title, descri
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: CLAUDE_MODEL,
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }]
     });
@@ -479,5 +469,6 @@ app.listen(PORT, () => {
   console.log(`\nContent Pipeline running at http://localhost:${PORT}`);
   console.log(`Also accessible at http://127.0.0.1:${PORT}`);
   console.log(`Ideas: ${DATA_FILE}`);
-  console.log(`Canva connected: ${!!canvaTokens}\n`);
+  console.log(`Canva connected: ${!!canvaTokens}`);
+  console.log(`Claude model: ${CLAUDE_MODEL}\n`);
 });
