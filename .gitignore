@@ -1,5 +1,7 @@
 # Secrets
 .env
+.canva-tokens.json
+.canva-pkce.json
 
 # Dependencies
 node_modules/
