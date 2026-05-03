@@ -1,5 +1,13 @@
 # Net Positive Method, AI Content Pipeline
 
+![Status](https://img.shields.io/badge/status-active-success)
+![Phase 3](https://img.shields.io/badge/Phase%203-complete-22C55E)
+![Phase 4](https://img.shields.io/badge/Phase%204-in%20progress-orange)
+![Built With](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)
+![Claude](https://img.shields.io/badge/Anthropic-Claude%20Sonnet%204.5-D97706)
+![Canva](https://img.shields.io/badge/Canva-Connect%20API-00C4CC?logo=canva&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
 An end-to-end, AI-powered content automation system. It generates Pinterest pin ideas with Claude, lets the operator approve them through a custom dashboard, and automatically creates branded designs in Canva via the Canva Connect API.
 
 Built solo as both a working tool for a personal-finance brand and a portfolio piece showcasing API orchestration, OAuth 2.0, and full-stack development.
@@ -127,11 +135,11 @@ node server.js
 `.env` template:
 
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 PORT=3000
 
-CANVA_CLIENT_ID=OC-AZ...
-CANVA_CLIENT_SECRET=...
+CANVA_CLIENT_ID=your-canva-client-id
+CANVA_CLIENT_SECRET=your-canva-client-secret
 CANVA_REDIRECT_URI=http://127.0.0.1:3000/oauth/canva/callback
 ```
 
