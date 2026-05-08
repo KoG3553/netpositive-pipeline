@@ -34,6 +34,13 @@ app.use(express.static(__dirname));
 const DATA_FILE = path.join(__dirname, 'ideas.json');
 const TOKEN_FILE = path.join(__dirname, '.canva-tokens.json');
 const PKCE_FILE = path.join(__dirname, '.canva-pkce.json');
+const WINDSOR_INSIGHTS_FILE           = path.join(__dirname, '.windsor-insights.json');
+const WINDSOR_PINTEREST_INSIGHTS_FILE = path.join(__dirname, '.windsor-pinterest-insights.json');
+
+// Windsor config
+const WINDSOR_API_KEY            = process.env.WINDSOR_API_KEY;
+const WINDSOR_ACCOUNT_ID         = process.env.WINDSOR_INSTAGRAM_ACCOUNT_ID || '17841448812096533';
+const WINDSOR_PINTEREST_ACCOUNT  = process.env.WINDSOR_PINTEREST_ACCOUNT_ID || '';
 
 // ---------------------------------------------------------------
 // Persistence
@@ -73,6 +80,36 @@ function saveTokens(tokens) {
 }
 
 let canvaTokens = loadTokens();
+
+// Windsor insights cache (disk-backed, 6 h TTL)
+function loadInsights() {
+  try {
+    if (fs.existsSync(WINDSOR_INSIGHTS_FILE)) {
+      return JSON.parse(fs.readFileSync(WINDSOR_INSIGHTS_FILE, 'utf8'));
+    }
+  } catch (err) {}
+  return null;
+}
+
+function saveInsights(data) {
+  fs.writeFileSync(WINDSOR_INSIGHTS_FILE, JSON.stringify(data, null, 2));
+}
+
+let cachedInsights = loadInsights();
+
+// Pinterest insights cache
+function loadPinterestInsights() {
+  try {
+    if (fs.existsSync(WINDSOR_PINTEREST_INSIGHTS_FILE)) {
+      return JSON.parse(fs.readFileSync(WINDSOR_PINTEREST_INSIGHTS_FILE, 'utf8'));
+    }
+  } catch (err) {}
+  return null;
+}
+function savePinterestInsights(data) {
+  fs.writeFileSync(WINDSOR_PINTEREST_INSIGHTS_FILE, JSON.stringify(data, null, 2));
+}
+let cachedPinterestInsights = loadPinterestInsights();
 
 // ---------------------------------------------------------------
 // PKCE helpers
@@ -123,13 +160,306 @@ async function ensureValidToken() {
 }
 
 // ---------------------------------------------------------------
+// Windsor.ai — helpers
+// ---------------------------------------------------------------
+
+// Extract the hook (first line of caption/title) from a raw string
+function extractHook(text) {
+  if (!text || typeof text !== 'string') return null;
+  const firstLine = text.split(/\n/)[0].trim();
+  return firstLine.length > 80 ? firstLine.slice(0, 77) + '...' : firstLine;
+}
+
+// Composite engagement score — use the best available metric
+function scoreEngagement(p, prefix = '') {
+  const f  = k => Number(p[prefix + k] || p[k] || 0);
+  const eng = f('engagement');  if (eng  > 0) return eng;
+  const l   = f('like_count'); const c = f('comments_count');
+  if (l > 0 || c > 0) return l + c;
+  return f('saves') || f('pin_clicks') || 0;
+}
+
+// Generic Windsor fetcher with automatic field-set fallback.
+// Tries each field set in order; moves to the next on a 400 field-error.
+async function fetchWindsorData(connector, fieldSets, extraParams = {}) {
+  if (!WINDSOR_API_KEY) return { ok: false, error: 'WINDSOR_API_KEY not set' };
+
+  for (const fields of fieldSets) {
+    const params = new URLSearchParams({
+      api_key:     WINDSOR_API_KEY,
+      fields,
+      date_preset: 'last_30dT',
+      ...extraParams
+    });
+    const url = `https://connectors.windsor.ai/${connector}?${params}`;
+    console.log(`[windsor/${connector}] Trying ${fields.split(',').length} fields`);
+
+    let r;
+    try { r = await fetch(url); } catch (e) {
+      return { ok: false, error: `Network error: ${e.message}` };
+    }
+
+    if (r.ok) {
+      const raw  = await r.json();
+      const rows = Array.isArray(raw) ? raw : (raw.data || []);
+      console.log(`[windsor/${connector}] ✓ ${rows.length} rows — fields: ${fields}`);
+      return { ok: true, rows, fieldsUsed: fields };
+    }
+
+    const txt = await r.text();
+    if (r.status === 400 && (txt.includes('Unexpected field') || txt.includes('expected string'))) {
+      console.log(`[windsor/${connector}] Field error, trying next fallback set…`);
+      console.log(`[windsor/${connector}]   ${txt.slice(0, 200)}`);
+      continue;
+    }
+    // Hard error (auth, server, etc.) — don't retry
+    console.error(`[windsor/${connector}] Hard error ${r.status}: ${txt.slice(0, 200)}`);
+    return { ok: false, status: r.status, error: txt };
+  }
+  return { ok: false, error: 'All field sets exhausted' };
+}
+
+function buildInsightText({ platform = 'Instagram', totalPosts, avgEngagement, avgReach, topPosts, avgSaves = 0 }) {
+  const label = platform === 'Pinterest' ? 'pins' : 'posts';
+  let text = `${platform} performance (last 30 days, ${totalPosts} ${label} analyzed):\n`;
+  text += `• Avg engagement per ${label.slice(0,-1)}: ${avgEngagement}\n`;
+  if (avgReach > 0)  text += `• Avg reach per ${label.slice(0,-1)}: ${avgReach}\n`;
+  if (avgSaves > 0)  text += `• Avg saves per ${label.slice(0,-1)}: ${avgSaves}\n`;
+
+  if (avgEngagement > 100) {
+    text += `• Engagement is strong — content is clearly resonating. Double down on top formats.\n`;
+  } else if (avgEngagement > 20) {
+    text += `• Engagement is moderate — experiment with stronger hooks and more utility-driven content.\n`;
+  } else {
+    text += `• Engagement is low — shift to more provocative openers and high-utility content (tools, trackers, one clear takeaway per pin).\n`;
+  }
+
+  if (topPosts.length) {
+    const top = topPosts[0];
+    const metric = top.saves > 0 ? `${top.saves} saves` : `${top.engagement} interactions`;
+    text += `• Best performing ${label.slice(0,-1)}: ${metric}`;
+    if (top.reach > 0) text += `, ${top.reach} reach`;
+    text += `\n`;
+    if (top.url) text += `  ${top.url}\n`;
+    if (top.title) text += `  Title: "${top.title}"\n`;
+  }
+
+  return text;
+}
+
+// ---------------------------------------------------------------
+// Windsor.ai — /api/windsor/insights
+// ---------------------------------------------------------------
+app.get('/api/windsor/insights', async (req, res) => {
+  const force = req.query.force === 'true';
+
+  // Serve from cache if fresh (< 6 h) and not forced
+  if (!force && cachedInsights?.fetched_at) {
+    const ageMs = Date.now() - new Date(cachedInsights.fetched_at).getTime();
+    if (ageMs < 6 * 60 * 60 * 1000) {
+      return res.json({ success: true, cached: true, insights: cachedInsights });
+    }
+  }
+
+  if (!WINDSOR_API_KEY) {
+    return res.status(400).json({ error: 'WINDSOR_API_KEY not set in .env' });
+  }
+
+  try {
+    // Field sets in priority order — falls back if a field is unsupported on this account
+    const igFieldSets = [
+      'date,media_id,media_type,media_url,media_impressions,media_reach,media_engagement,media_like_count,media_comments_count',
+      'date,media_id,media_type,media_url,media_impressions,media_reach,media_like_count,media_comments_count',
+      'date,media_id,media_type,media_url,media_like_count,media_comments_count',
+      'date,media_id,media_like_count',
+    ];
+
+    const result = await fetchWindsorData('instagram', igFieldSets, { accounts: WINDSOR_ACCOUNT_ID });
+    if (!result.ok) {
+      return res.status(result.status || 500).json({ error: result.error });
+    }
+
+    const rows = result.rows;
+
+    // DEBUG: show first raw row so we can confirm which fields are populated
+    if (rows.length > 0) {
+      const s = rows[0];
+      console.log('[windsor/instagram] First raw row:', JSON.stringify(s));
+      console.log('[windsor/instagram] Field presence:', Object.fromEntries(
+        Object.entries(s).map(([k, v]) => [k, (v !== null && v !== undefined && v !== '') ? '✓' : '—'])
+      ));
+    }
+
+    const posts = rows.filter(p => p.date && p.media_id);
+    console.log(`[windsor/instagram] ${posts.length} / ${rows.length} rows have date+media_id`);
+
+    if (!posts.length) {
+      const empty = { fetched_at: new Date().toISOString(), total_posts: 0, aggregate: {}, top_posts: [], insight_text: null, platform: 'instagram', warning: 'No rows with date+media_id' };
+      cachedInsights = empty; saveInsights(empty);
+      return res.json({ success: true, cached: false, insights: empty });
+    }
+
+    const enriched = posts.map(p => ({
+      date:        p.date,
+      media_id:    p.media_id,
+      media_type:  p.media_type || 'IMAGE',
+      url:         p.media_url  || null,
+      impressions: Number(p.media_impressions)      || 0,
+      reach:       Number(p.media_reach)            || 0,
+      likes:       Number(p.media_like_count)       || 0,
+      comments:    Number(p.media_comments_count)   || 0,
+      engagement:  scoreEngagement(p, 'media_'),
+    }));
+
+    const topPosts      = [...enriched].sort((a, b) => b.engagement - a.engagement).slice(0, 5);
+    const totalPosts    = enriched.length;
+    const avgEngagement = Math.round(enriched.reduce((s, p) => s + p.engagement, 0) / totalPosts);
+    const avgReach      = Math.round(enriched.reduce((s, p) => s + p.reach,      0) / totalPosts);
+    const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
+
+    const insightText = buildInsightText({ platform: 'Instagram', totalPosts, avgEngagement, avgReach, topPosts });
+
+    const insights = {
+      fetched_at:  new Date().toISOString(),
+      platform:    'instagram',
+      total_posts: totalPosts,
+      date_range:  dateRange,
+      fields_used: result.fieldsUsed,
+      aggregate:   { avg_engagement: avgEngagement, avg_reach: avgReach },
+      top_posts:   topPosts,
+      insight_text: insightText
+    };
+
+    cachedInsights = insights;
+    saveInsights(insights);
+    res.json({ success: true, cached: false, insights });
+  } catch (err) {
+    console.error('[windsor/instagram] Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------------------------------------------------------
+// Windsor.ai — /api/windsor/pinterest-insights
+// ---------------------------------------------------------------
+app.get('/api/windsor/pinterest-insights', async (req, res) => {
+  const force = req.query.force === 'true';
+
+  if (!force && cachedPinterestInsights?.fetched_at) {
+    const ageMs = Date.now() - new Date(cachedPinterestInsights.fetched_at).getTime();
+    if (ageMs < 6 * 60 * 60 * 1000) {
+      return res.json({ success: true, cached: true, insights: cachedPinterestInsights });
+    }
+  }
+
+  if (!WINDSOR_API_KEY) {
+    return res.status(400).json({ error: 'WINDSOR_API_KEY not set in .env' });
+  }
+
+  try {
+    // Field sets in priority order — falls back automatically on field errors
+    const pinFieldSets = [
+      'date,pin_id,pin_title,impressions,saves,pin_clicks,outbound_click,engagement',
+      'date,pin_id,pin_title,impressions,saves,pin_clicks',
+      'date,pin_id,pin_title,impressions,saves',
+      'date,pin_id,impressions,saves',
+      'date,pin_id,impressions',
+    ];
+
+    const extra = WINDSOR_PINTEREST_ACCOUNT ? { accounts: WINDSOR_PINTEREST_ACCOUNT } : {};
+    const result = await fetchWindsorData('pinterest_organic', pinFieldSets, extra);
+
+    if (!result.ok) {
+      return res.status(result.status || 500).json({ error: result.error });
+    }
+
+    const rows = result.rows;
+
+    if (rows.length > 0) {
+      console.log('[windsor/pinterest] First raw row:', JSON.stringify(rows[0]));
+      console.log('[windsor/pinterest] Field presence:', Object.fromEntries(
+        Object.entries(rows[0]).map(([k, v]) => [k, (v !== null && v !== undefined && v !== '') ? '✓' : '—'])
+      ));
+    }
+
+    const pins = rows.filter(p => p.date && p.pin_id);
+    console.log(`[windsor/pinterest] ${pins.length} / ${rows.length} rows have date+pin_id`);
+
+    if (!pins.length) {
+      const empty = { fetched_at: new Date().toISOString(), total_posts: 0, aggregate: {}, top_posts: [], insight_text: null, platform: 'pinterest', warning: 'No rows with date+pin_id. Check Pinterest is connected in Windsor.' };
+      cachedPinterestInsights = empty; savePinterestInsights(empty);
+      return res.json({ success: true, cached: false, insights: empty });
+    }
+
+    const enriched = pins.map(p => ({
+      date:        p.date,
+      pin_id:      p.pin_id,
+      title:       p.pin_title || null,
+      url:         p.pin_url   || null,
+      impressions: Number(p.impressions)     || 0,
+      saves:       Number(p.saves)           || 0,
+      clicks:      Number(p.pin_clicks)      || 0,
+      outbound:    Number(p.outbound_click)  || 0,
+      engagement:  Number(p.engagement) || Number(p.saves) || Number(p.pin_clicks) || 0,
+    }));
+
+    // Pinterest primary sort: saves (most intent-driven metric); fallback to engagement
+    const topPosts      = [...enriched].sort((a, b) => (b.saves || b.engagement) - (a.saves || a.engagement)).slice(0, 5);
+    const totalPosts    = enriched.length;
+    const avgEngagement = Math.round(enriched.reduce((s, p) => s + p.engagement, 0) / totalPosts);
+    const avgSaves      = Math.round(enriched.reduce((s, p) => s + p.saves,      0) / totalPosts);
+    const avgReach      = Math.round(enriched.reduce((s, p) => s + p.impressions,0) / totalPosts);
+    const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
+
+    const insightText = buildInsightText({ platform: 'Pinterest', totalPosts, avgEngagement, avgReach, avgSaves, topPosts });
+
+    const insights = {
+      fetched_at:  new Date().toISOString(),
+      platform:    'pinterest',
+      total_posts: totalPosts,
+      date_range:  dateRange,
+      fields_used: result.fieldsUsed,
+      aggregate:   { avg_engagement: avgEngagement, avg_saves: avgSaves, avg_reach: avgReach },
+      top_posts:   topPosts,
+      insight_text: insightText
+    };
+
+    cachedPinterestInsights = insights;
+    savePinterestInsights(insights);
+    res.json({ success: true, cached: false, insights });
+  } catch (err) {
+    console.error('[windsor/pinterest] Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------------------------------------------------------
 // Health
 // ---------------------------------------------------------------
 app.get('/api/health', (req, res) => {
+  const insightsAgeH = cachedInsights?.fetched_at
+    ? Math.round((Date.now() - new Date(cachedInsights.fetched_at).getTime()) / 3600000)
+    : null;
+
+  const pinAgeH = cachedPinterestInsights?.fetched_at
+    ? Math.round((Date.now() - new Date(cachedPinterestInsights.fetched_at).getTime()) / 3600000)
+    : null;
+
   res.json({
     status: 'ok',
     ideas: ideasStore.length,
-    canva_connected: !!canvaTokens
+    canva_connected: !!canvaTokens,
+    windsor_key_set: !!WINDSOR_API_KEY,
+    instagram: {
+      cached:   !!cachedInsights?.insight_text,
+      age_h:    insightsAgeH,
+      posts:    cachedInsights?.total_posts ?? 0
+    },
+    pinterest: {
+      cached:   !!cachedPinterestInsights?.insight_text,
+      age_h:    pinAgeH,
+      posts:    cachedPinterestInsights?.total_posts ?? 0
+    }
   });
 });
 
@@ -345,7 +675,7 @@ app.post('/api/canva/autofill', async (req, res) => {
 // Existing routes (Phase 1 + 2)
 // ---------------------------------------------------------------
 app.post('/api/generate', async (req, res) => {
-  const { platform = 'pinterest', count = 10, mix = 'balanced', tone = 'direct', brandNotes = '' } = req.body;
+  const { platform = 'pinterest', count = 10, mix = 'balanced', tone = 'direct', brandNotes = '', useInsights = true } = req.body;
 
   const mixMap = {
     balanced: '4 cash flow/tracker pins, 3 personal finance tips, 3 side hustle/creator pins',
@@ -362,10 +692,40 @@ app.post('/api/generate', async (req, res) => {
 
   const platformLabel = platform === 'pinterest' ? 'Pinterest pins' : platform === 'reel' ? 'Instagram Reels' : 'Pinterest pins and Instagram Reels';
 
+  // Build combined insight block from Pinterest (primary) + Instagram (secondary)
+  let insightBlock = '';
+  const freshH = t => t ? (Date.now() - new Date(t).getTime()) / 3600000 : 999;
+
+  if (useInsights) {
+    const pinFresh = cachedPinterestInsights?.insight_text && freshH(cachedPinterestInsights.fetched_at) < 24;
+    const igFresh  = cachedInsights?.insight_text           && freshH(cachedInsights.fetched_at)          < 24;
+    const sources  = [];
+
+    if (pinFresh || igFresh) {
+      insightBlock = '\nPERFORMANCE DATA — use this to weight your content choices:\n\n';
+
+      if (pinFresh) {
+        insightBlock += `PRIMARY SOURCE — PINTEREST (last 30 days):\n${cachedPinterestInsights.insight_text}\n\n`;
+        sources.push('Pinterest');
+      }
+      if (igFresh) {
+        insightBlock += `SECONDARY SOURCE — INSTAGRAM (last 30 days):\n${cachedInsights.insight_text}\n\n`;
+        sources.push('Instagram');
+      }
+      if (pinFresh) {
+        insightBlock += `IMPORTANT: The user's primary output platform is Pinterest. Pinterest patterns carry more weight than Instagram patterns for pin idea generation.\n`;
+      }
+
+      console.log(`[generate] Insights injected from: ${sources.join(', ')}`);
+    }
+  } else {
+    console.log('[generate] Insights disabled by user toggle');
+  }
+
   const prompt = `You are a content strategist for Net Positive Method — a faceless personal finance brand that sells a cash flow tracker on Gumroad and Etsy.
 
 Core philosophy: most people have a visibility problem, not a money problem. The only number that matters is whether cash flow ends the month positive or negative.
-
+${insightBlock}
 Generate exactly ${count} ${platformLabel}.
 
 Content mix: ${mixMap[mix] || mixMap.balanced}

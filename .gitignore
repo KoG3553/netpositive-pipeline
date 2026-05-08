@@ -2,6 +2,8 @@
 .env
 .canva-tokens.json
 .canva-pkce.json
+.windsor-insights.json
+.windsor-pinterest-insights.json
 
 # Dependencies
 node_modules/

@@ -21,6 +21,48 @@
   .btn-canva { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; }
   .btn-canva-connect { background: #8B3DFF; color: #fff; }
   .btn-canva-disconnect { background: transparent; color: #9CA3AF; border: 1px solid #374151; }
+  .windsor-panel { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 18px; margin-bottom: 1.25rem; }
+  .windsor-panel.active { border-left: 3px solid #8B3DFF; }
+  .windsor-panel.inactive { border-left: 3px solid #374151; }
+  .windsor-panel.no-key { border-left: 3px solid #F59E0B; }
+  .windsor-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .windsor-info { flex: 1; min-width: 0; }
+  .windsor-title { font-size: 13px; color: #E5E7EB; }
+  .windsor-title strong { color: #F9FAFB; }
+  .windsor-meta { font-size: 12px; color: #9CA3AF; margin-top: 3px; }
+  .windsor-stats { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+  .windsor-stat .val { color: #C4B5FD; font-weight: 600; font-size: 13px; }
+  .windsor-stat .lbl { color: #6B7280; font-size: 12px; }
+  .windsor-actions { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .btn-windsor-refresh { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; background: transparent; color: #9CA3AF; border: 1px solid #374151; }
+  .btn-windsor-refresh:hover { border-color: #8B3DFF; color: #C4B5FD; }
+  .btn-windsor-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
+  .windsor-toggle-wrap { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280; cursor: pointer; padding: 7px 0; }
+  .windsor-toggle-wrap input { accent-color: #8B3DFF; cursor: pointer; width: 14px; height: 14px; }
+  .windsor-toggle-wrap:hover { color: #9CA3AF; }
+  /* Expandable details */
+  .windsor-expand-btn { background: none; border: none; color: #6B7280; font-size: 12px; cursor: pointer; padding: 6px 0 0; display: inline-flex; align-items: center; gap: 4px; }
+  .windsor-expand-btn:hover { color: #9CA3AF; }
+  .windsor-details { display: none; margin-top: 12px; border-top: 1px solid #1F2937; padding-top: 12px; }
+  .windsor-details.open { display: block; }
+  .windsor-platforms { display: flex; gap: 20px; margin-bottom: 10px; flex-wrap: wrap; }
+  .windsor-platform-badge { font-size: 12px; }
+  .windsor-platform-badge .platform-name { font-weight: 600; color: #E5E7EB; }
+  .windsor-platform-badge .platform-stat { color: #6B7280; }
+  .windsor-top-posts { margin-top: 8px; }
+  .windsor-top-posts h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 6px; font-weight: 500; }
+  .top-post-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+  .top-post-rank { color: #4B5563; min-width: 14px; }
+  .top-post-metric { color: #C4B5FD; font-weight: 600; min-width: 70px; }
+  .top-post-link { color: #6B7280; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px; display: inline-block; }
+  .top-post-link:hover { color: #9CA3AF; text-decoration: underline; }
+  .top-post-title { color: #9CA3AF; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
+  .windsor-date-range { font-size: 11px; color: #4B5563; margin-top: 8px; }
+  /* Insights banner */
+  .insights-banner { background: #130f23; border: 1px solid #2d1f4e; border-radius: 8px; padding: 10px 14px; margin-bottom: 1rem; font-size: 12px; color: #C4B5FD; display: none; }
+  .insights-banner.visible { display: block; }
+  .insights-banner strong { color: #DDD6FE; }
+  .insights-banner.disabled { background: #111827; border-color: #1F2937; color: #4B5563; }
   .tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid #1F2937; }
   .tab { font-size: 13px; padding: 10px 18px; border: none; background: none; cursor: pointer; color: #9CA3AF; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; }
   .tab.active { color: #F9FAFB; border-bottom: 2px solid #22C55E; }
@@ -106,6 +148,29 @@
     </div>
   </div>
 
+  <div id="windsor-panel" class="windsor-panel inactive">
+    <div class="windsor-header">
+      <div class="windsor-info">
+        <div class="windsor-title"><strong>Windsor:</strong> <span id="windsor-status-label">checking...</span></div>
+        <div class="windsor-meta" id="windsor-meta"></div>
+        <div class="windsor-stats" id="windsor-stats"></div>
+        <button class="windsor-expand-btn" id="windsor-expand-btn" onclick="toggleWindsorDetails()" style="display:none">▶ Show details</button>
+      </div>
+      <div class="windsor-actions">
+        <label class="windsor-toggle-wrap" title="Toggle whether insights are injected into the Claude prompt">
+          <input type="checkbox" id="insights-toggle" checked onchange="onInsightsToggle()" />
+          Use in generation
+        </label>
+        <button class="btn-windsor-refresh" id="btn-refresh-insights" onclick="refreshInsights()">Refresh insights</button>
+      </div>
+    </div>
+    <div class="windsor-details" id="windsor-details">
+      <div class="windsor-platforms" id="windsor-platforms"></div>
+      <div class="windsor-top-posts" id="windsor-top-posts"></div>
+      <div class="windsor-date-range" id="windsor-date-range"></div>
+    </div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" onclick="switchTab('generate')">Generate</button>
     <button class="tab" onclick="switchTab('queue')">Queue <span id="queue-count"></span></button>
@@ -150,6 +215,7 @@
     <label>Brand notes (optional — steer the AI)</label>
     <textarea id="brand-notes" placeholder="e.g. Focus on behavior not budgeting. Never use the word 'budget'."></textarea>
     <div style="height:12px"></div>
+    <div class="insights-banner" id="insights-banner"></div>
     <button class="btn-primary" id="gen-btn" onclick="generateIdeas()">Generate ideas</button>
     <div class="status" id="status"></div>
     <div id="ideas-list"></div>
@@ -204,12 +270,197 @@ function setStatus(msg, type) {
   el.className = 'status' + (type ? ' ' + type : '');
 }
 
+// ── Windsor insights ─────────────────────────────────────────────
+let igInsights  = null;
+let pinInsights = null;
+
+function insightsEnabled() {
+  return document.getElementById('insights-toggle')?.checked ?? true;
+}
+
+function onInsightsToggle() {
+  localStorage.setItem('npm_insights_enabled', insightsEnabled());
+  renderBanner();
+}
+
+function toggleWindsorDetails() {
+  const details = document.getElementById('windsor-details');
+  const btn     = document.getElementById('windsor-expand-btn');
+  const open    = details.classList.toggle('open');
+  btn.textContent = open ? '▼ Hide details' : '▶ Show details';
+}
+
+async function loadInsights(force = false) {
+  const qs = force ? '?force=true' : '';
+  // Fire both in parallel; each updates its own cache slot
+  const [igRes, pinRes] = await Promise.allSettled([
+    fetch(API + '/windsor/insights'           + qs).then(r => r.json()).catch(() => null),
+    fetch(API + '/windsor/pinterest-insights' + qs).then(r => r.json()).catch(() => null),
+  ]);
+
+  if (igRes.status  === 'fulfilled' && igRes.value?.success)  igInsights  = igRes.value.insights;
+  if (pinRes.status === 'fulfilled' && pinRes.value?.success) pinInsights = pinRes.value.insights;
+
+  renderInsightsPanel();
+}
+
+async function refreshInsights() {
+  const btn = document.getElementById('btn-refresh-insights');
+  btn.disabled = true;
+  btn.textContent = 'Refreshing…';
+  document.getElementById('windsor-status-label').textContent = 'fetching…';
+  await loadInsights(true);
+  btn.disabled = false;
+  btn.textContent = 'Refresh insights';
+}
+
+function renderInsightsPanel() {
+  const panel     = document.getElementById('windsor-panel');
+  const label     = document.getElementById('windsor-status-label');
+  const meta      = document.getElementById('windsor-meta');
+  const stats     = document.getElementById('windsor-stats');
+  const expandBtn = document.getElementById('windsor-expand-btn');
+
+  const hasIg  = igInsights?.insight_text  && igInsights.total_posts  > 0;
+  const hasPin = pinInsights?.insight_text && pinInsights.total_posts > 0;
+
+  if (!hasIg && !hasPin) {
+    panel.className     = 'windsor-panel inactive';
+    label.textContent   = 'No data yet';
+    meta.textContent    = igInsights?.warning || pinInsights?.warning || 'Click Refresh insights to fetch';
+    stats.innerHTML     = '';
+    expandBtn.style.display = 'none';
+    renderBanner();
+    return;
+  }
+
+  panel.className = 'windsor-panel active';
+
+  // Status line
+  const parts = [];
+  if (hasPin) parts.push(`📌 Pinterest: ${pinInsights.total_posts} pins`);
+  if (hasIg)  parts.push(`📸 Instagram: ${igInsights.total_posts} posts`);
+  label.textContent = parts.join(' · ');
+
+  // Most recent fetch time
+  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at]
+    .filter(Boolean).sort().at(-1);
+  meta.textContent = newest ? `Last fetched ${formatAge(new Date(newest))}` : '';
+
+  // Summary stats (prefer Pinterest since it's primary)
+  const primary = hasPin ? pinInsights : igInsights;
+  const agg     = primary.aggregate || {};
+  const statRows = [];
+  if (agg.avg_engagement > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_engagement}</span> <span class="lbl">avg eng${hasPin ? ' (pin)' : ''}</span></div>`);
+  if (agg.avg_saves      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_saves}</span> <span class="lbl">avg saves</span></div>`);
+  if (agg.avg_reach      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_reach}</span> <span class="lbl">avg reach</span></div>`);
+  stats.innerHTML = statRows.join('');
+
+  // Expand button
+  expandBtn.style.display = 'inline-flex';
+  renderDetails();
+  renderBanner();
+}
+
+function renderDetails() {
+  // Per-platform breakdown
+  const platforms = document.getElementById('windsor-platforms');
+  const rows = [];
+  if (pinInsights?.total_posts > 0) {
+    const a = pinInsights.aggregate || {};
+    rows.push(`<div class="windsor-platform-badge"><span class="platform-name">📌 Pinterest</span> <span class="platform-stat">${pinInsights.total_posts} pins · avg ${a.avg_saves ?? 0} saves · avg ${a.avg_engagement ?? 0} eng</span></div>`);
+  }
+  if (igInsights?.total_posts > 0) {
+    const a = igInsights.aggregate || {};
+    rows.push(`<div class="windsor-platform-badge"><span class="platform-name">📸 Instagram</span> <span class="platform-stat">${igInsights.total_posts} posts · avg ${a.avg_engagement ?? 0} eng · avg ${a.avg_reach ?? 0} reach</span></div>`);
+  }
+  platforms.innerHTML = rows.join('');
+
+  // Top posts — merge Pinterest (primary) and Instagram, take top 3
+  const topPostsEl = document.getElementById('windsor-top-posts');
+  const allTop = [
+    ...(pinInsights?.top_posts || []).map(p => ({ ...p, _src: '📌' })),
+    ...(igInsights?.top_posts  || []).map(p => ({ ...p, _src: '📸' })),
+  ].sort((a, b) => {
+    const scoreA = a.saves || a.engagement || 0;
+    const scoreB = b.saves || b.engagement || 0;
+    return scoreB - scoreA;
+  }).slice(0, 3);
+
+  if (allTop.length) {
+    const postRows = allTop.map((p, i) => {
+      const metric = p.saves > 0 ? `${p.saves} saves` : `${p.engagement} eng`;
+      const link   = p.url  ? `<a class="top-post-link" href="${escapeHtml(p.url)}" target="_blank">${escapeHtml(p.url)}</a>` : '';
+      const title  = p.title ? `<span class="top-post-title">"${escapeHtml(p.title)}"</span>` : '';
+      return `<div class="top-post-row"><span class="top-post-rank">${i+1}.</span><span class="top-post-metric">${p._src} ${metric}</span>${title || link}</div>`;
+    }).join('');
+    topPostsEl.innerHTML = `<h4>Top performers</h4>${postRows}`;
+  } else {
+    topPostsEl.innerHTML = '';
+  }
+
+  // Date range
+  const dateRangeEl = document.getElementById('windsor-date-range');
+  const ranges = [];
+  if (pinInsights?.date_range?.from) ranges.push(`Pinterest: ${pinInsights.date_range.from} → ${pinInsights.date_range.to || 'today'}`);
+  if (igInsights?.date_range?.from)  ranges.push(`Instagram: ${igInsights.date_range.from} → ${igInsights.date_range.to || 'today'}`);
+  dateRangeEl.textContent = ranges.length ? `Date ranges — ${ranges.join(' | ')}` : '';
+}
+
+function renderBanner() {
+  const banner  = document.getElementById('insights-banner');
+  const enabled = insightsEnabled();
+  const hasPin  = pinInsights?.insight_text && pinInsights.total_posts > 0;
+  const hasIg   = igInsights?.insight_text  && igInsights.total_posts  > 0;
+
+  if (!hasPin && !hasIg) {
+    banner.className = 'insights-banner';
+    return;
+  }
+  if (!enabled) {
+    banner.className = 'insights-banner visible disabled';
+    banner.innerHTML = '<strong>Insights off</strong> — generation will use base prompt only. Toggle "Use in generation" to re-enable.';
+    return;
+  }
+  const src = [hasPin ? '📌 Pinterest' : null, hasIg ? '📸 Instagram' : null].filter(Boolean).join(' + ');
+  banner.className = 'insights-banner visible';
+  banner.innerHTML = `<strong>⚡ Insights active</strong> — Claude is using ${src} performance data. Pinterest patterns are weighted as primary.`;
+}
+
+function renderInsightsPanelError(msg) {
+  const panel = document.getElementById('windsor-panel');
+  document.getElementById('windsor-status-label').textContent = 'Not configured';
+  document.getElementById('windsor-meta').textContent         = msg;
+  document.getElementById('windsor-stats').innerHTML          = '';
+  document.getElementById('insights-banner').className        = 'insights-banner';
+  document.getElementById('windsor-expand-btn').style.display = 'none';
+  panel.className = 'windsor-panel no-key';
+}
+
+function formatAge(date) {
+  const diffMs = Date.now() - date.getTime();
+  const diffH  = Math.floor(diffMs / 3600000);
+  const diffM  = Math.floor((diffMs % 3600000) / 60000);
+  if (diffH >= 1) return `${diffH}h ${diffM}m ago`;
+  return `${diffM}m ago`;
+}
+// ─────────────────────────────────────────────────────────────────
+
 async function loadHealth() {
   try {
     const res = await fetch(API + '/health');
     const data = await res.json();
     canvaConnected = !!data.canva_connected;
     updateCanvaStatus();
+    if (!data.windsor_key_set) {
+      renderInsightsPanelError('Add WINDSOR_API_KEY to .env to enable');
+    }
+    // Restore toggle from localStorage
+    const savedToggle = localStorage.getItem('npm_insights_enabled');
+    if (savedToggle === 'false') {
+      const tog = document.getElementById('insights-toggle');
+      if (tog) tog.checked = false;
+    }
   } catch (e) {}
 }
 
@@ -278,11 +529,12 @@ async function generateIdeas() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        platform: document.getElementById('platform').value,
-        count: parseInt(document.getElementById('count').value),
-        mix: document.getElementById('mix').value,
-        tone: document.getElementById('tone').value,
-        brandNotes: document.getElementById('brand-notes').value.trim()
+        platform:    document.getElementById('platform').value,
+        count:       parseInt(document.getElementById('count').value),
+        mix:         document.getElementById('mix').value,
+        tone:        document.getElementById('tone').value,
+        brandNotes:  document.getElementById('brand-notes').value.trim(),
+        useInsights: insightsEnabled()
       })
     });
     const data = await res.json();
@@ -487,6 +739,7 @@ async function clearQueue() {
 
 loadHealth();
 loadIdeas();
+loadInsights();
 </script>
 </body>
 </html>
