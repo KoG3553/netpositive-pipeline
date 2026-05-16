@@ -268,9 +268,10 @@ app.get('/api/windsor/insights', async (req, res) => {
   try {
     // Field sets in priority order — falls back if a field is unsupported on this account
     const igFieldSets = [
+      'date,media_id,media_type,media_permalink,media_caption,media_url,media_impressions,media_reach,media_engagement,media_like_count,media_comments_count',
+      'date,media_id,media_type,media_permalink,media_url,media_impressions,media_reach,media_engagement,media_like_count,media_comments_count',
       'date,media_id,media_type,media_url,media_impressions,media_reach,media_engagement,media_like_count,media_comments_count',
       'date,media_id,media_type,media_url,media_impressions,media_reach,media_like_count,media_comments_count',
-      'date,media_id,media_type,media_url,media_like_count,media_comments_count',
       'date,media_id,media_like_count',
     ];
 
@@ -303,7 +304,8 @@ app.get('/api/windsor/insights', async (req, res) => {
       date:        p.date,
       media_id:    p.media_id,
       media_type:  p.media_type || 'IMAGE',
-      url:         p.media_url  || null,
+      title:       extractHook(p.media_caption) || null,
+      url:         p.media_permalink || p.media_url || null,
       impressions: Number(p.media_impressions)      || 0,
       reach:       Number(p.media_reach)            || 0,
       likes:       Number(p.media_like_count)       || 0,
@@ -334,17 +336,43 @@ app.get('/api/windsor/insights', async (req, res) => {
     const avgReach      = totalPosts ? Math.round(uniquePosts.reduce((s, p) => s + p.reach,      0) / totalPosts) : 0;
     const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
 
+    // Daily totals across all posts — used for reach trend in Insights tab
+    const igDayAgg = new Map();
+    for (const p of enriched) {
+      const d = igDayAgg.get(p.date) || { date: p.date, reach: 0, engagement: 0 };
+      d.reach      += p.reach;
+      d.engagement += p.engagement;
+      igDayAgg.set(p.date, d);
+    }
+    const dailyData = [...igDayAgg.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+    // Day-of-week averages (Windsor is daily data; no hour-of-day available)
+    const igDowAgg = new Map();
+    for (const p of enriched) {
+      const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(p.date + 'T12:00:00Z').getDay()];
+      const d = igDowAgg.get(dow) || { day: dow, total_reach: 0, total_engagement: 0, count: 0 };
+      d.total_reach      += p.reach;
+      d.total_engagement += p.engagement;
+      d.count            += 1;
+      igDowAgg.set(dow, d);
+    }
+    const igDayBreakdown = [...igDowAgg.values()]
+      .map(d => ({ day: d.day, avg_reach: d.count ? Math.round(d.total_reach / d.count) : 0, avg_engagement: d.count ? Math.round(d.total_engagement / d.count) : 0, count: d.count }))
+      .sort((a, b) => b.avg_reach - a.avg_reach);
+
     const insightText = buildInsightText({ platform: 'Instagram', totalPosts, avgEngagement, avgReach, topPosts });
 
     const insights = {
-      fetched_at:  new Date().toISOString(),
-      platform:    'instagram',
-      total_posts: totalPosts,
-      date_range:  dateRange,
-      fields_used: result.fieldsUsed,
-      aggregate:   { avg_engagement: avgEngagement, avg_reach: avgReach },
-      top_posts:   topPosts,
-      insight_text: insightText
+      fetched_at:    new Date().toISOString(),
+      platform:      'instagram',
+      total_posts:   totalPosts,
+      date_range:    dateRange,
+      fields_used:   result.fieldsUsed,
+      aggregate:     { avg_engagement: avgEngagement, avg_reach: avgReach },
+      top_posts:     topPosts,
+      daily_data:    dailyData,
+      day_breakdown: igDayBreakdown,
+      insight_text:  insightText
     };
 
     cachedInsights = insights;
@@ -412,7 +440,7 @@ app.get('/api/windsor/pinterest-insights', async (req, res) => {
       date:        p.date,
       pin_id:      p.pin_id,
       title:       p.pin_title || null,
-      url:         p.pin_url   || null,
+      url:         p.pin_url   || (p.pin_id ? `https://www.pinterest.com/pin/${p.pin_id}/` : null),
       impressions: Number(p.impressions)     || 0,
       saves:       Number(p.saves)           || 0,
       clicks:      Number(p.pin_clicks)      || 0,
@@ -445,17 +473,44 @@ app.get('/api/windsor/pinterest-insights', async (req, res) => {
     const avgReach      = totalPosts ? Math.round(uniquePins.reduce((s, p) => s + p.impressions,0) / totalPosts) : 0;
     const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
 
+    // Daily totals across all pins — used for reach trend in Insights tab
+    const pinDayAgg = new Map();
+    for (const p of enriched) {
+      const d = pinDayAgg.get(p.date) || { date: p.date, impressions: 0, saves: 0, engagement: 0 };
+      d.impressions += p.impressions;
+      d.saves       += p.saves;
+      d.engagement  += p.engagement;
+      pinDayAgg.set(p.date, d);
+    }
+    const dailyData = [...pinDayAgg.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+    // Day-of-week averages
+    const pinDowAgg = new Map();
+    for (const p of enriched) {
+      const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(p.date + 'T12:00:00Z').getDay()];
+      const d = pinDowAgg.get(dow) || { day: dow, total_impressions: 0, total_saves: 0, count: 0 };
+      d.total_impressions += p.impressions;
+      d.total_saves       += p.saves;
+      d.count             += 1;
+      pinDowAgg.set(dow, d);
+    }
+    const pinDayBreakdown = [...pinDowAgg.values()]
+      .map(d => ({ day: d.day, avg_reach: d.count ? Math.round(d.total_impressions / d.count) : 0, avg_saves: d.count ? Math.round(d.total_saves / d.count) : 0, count: d.count }))
+      .sort((a, b) => b.avg_reach - a.avg_reach);
+
     const insightText = buildInsightText({ platform: 'Pinterest', totalPosts, avgEngagement, avgReach, avgSaves, topPosts });
 
     const insights = {
-      fetched_at:  new Date().toISOString(),
-      platform:    'pinterest',
-      total_posts: totalPosts,
-      date_range:  dateRange,
-      fields_used: result.fieldsUsed,
-      aggregate:   { avg_engagement: avgEngagement, avg_saves: avgSaves, avg_reach: avgReach },
-      top_posts:   topPosts,
-      insight_text: insightText
+      fetched_at:    new Date().toISOString(),
+      platform:      'pinterest',
+      total_posts:   totalPosts,
+      date_range:    dateRange,
+      fields_used:   result.fieldsUsed,
+      aggregate:     { avg_engagement: avgEngagement, avg_saves: avgSaves, avg_reach: avgReach },
+      top_posts:     topPosts,
+      daily_data:    dailyData,
+      day_breakdown: pinDayBreakdown,
+      insight_text:  insightText
     };
 
     cachedPinterestInsights = insights;

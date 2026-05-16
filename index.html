@@ -40,7 +40,6 @@
   .windsor-toggle-wrap { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280; cursor: pointer; padding: 7px 0; }
   .windsor-toggle-wrap input { accent-color: #8B3DFF; cursor: pointer; width: 14px; height: 14px; }
   .windsor-toggle-wrap:hover { color: #9CA3AF; }
-  /* Expandable details */
   .windsor-expand-btn { background: none; border: none; color: #6B7280; font-size: 12px; cursor: pointer; padding: 6px 0 0; display: inline-flex; align-items: center; gap: 4px; }
   .windsor-expand-btn:hover { color: #9CA3AF; }
   .windsor-details { display: none; margin-top: 12px; border-top: 1px solid #1F2937; padding-top: 12px; }
@@ -58,7 +57,6 @@
   .top-post-link:hover { color: #9CA3AF; text-decoration: underline; }
   .top-post-title { color: #9CA3AF; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
   .windsor-date-range { font-size: 11px; color: #4B5563; margin-top: 8px; }
-  /* Insights banner */
   .insights-banner { background: #130f23; border: 1px solid #2d1f4e; border-radius: 8px; padding: 10px 14px; margin-bottom: 1rem; font-size: 12px; color: #C4B5FD; display: none; }
   .insights-banner.visible { display: block; }
   .insights-banner strong { color: #DDD6FE; }
@@ -126,6 +124,58 @@
   .modal p { color: #9CA3AF; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
   .modal label { color: #9CA3AF; }
   .modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
+
+  /* ── Insights tab ─────────────────────────────────────────────── */
+  .ins-tab-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 12px; flex-wrap: wrap; }
+  .ins-tab-title { font-size: 16px; font-weight: 600; color: #F9FAFB; }
+  .ins-tab-sub { font-size: 12px; color: #6B7280; margin-top: 3px; }
+  .ins-last-refresh { font-size: 11px; color: #4B5563; margin-top: 5px; }
+  .btn-ins-refresh { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; background: transparent; color: #9CA3AF; border: 1px solid #374151; }
+  .btn-ins-refresh:hover { border-color: #22C55E; color: #22C55E; }
+  .btn-ins-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
+  .ins-loading { display: flex; align-items: center; justify-content: center; padding: 4rem; color: #6B7280; font-size: 14px; gap: 10px; }
+  .ins-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .ins-col { display: flex; flex-direction: column; gap: 10px; }
+  .ins-platform-label { font-size: 13px; font-weight: 600; color: #F9FAFB; margin-bottom: 2px; padding-bottom: 8px; border-bottom: 1px solid #1F2937; }
+  .ins-card { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 16px; }
+  .ins-header-card { border-left: 3px solid #22C55E; }
+  .ins-card-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ins-stat { flex: 1; min-width: 64px; }
+  .ins-stat-val { font-size: 19px; font-weight: 600; color: #F9FAFB; line-height: 1.2; }
+  .ins-stat-lbl { font-size: 10px; color: #6B7280; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .ins-date-range { font-size: 11px; color: #4B5563; margin-top: 4px; }
+  .ins-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; font-weight: 600; margin-bottom: 10px; }
+  .ins-empty { text-align: center; padding: 2.5rem 1rem; color: #9CA3AF; font-size: 13px; }
+  .ins-empty a { color: #C4B5FD; text-decoration: none; }
+  .ins-empty a:hover { text-decoration: underline; }
+  .ins-empty-sm { font-size: 12px; color: #4B5563; font-style: italic; padding: 4px 0; }
+  /* Top performers table */
+  .perf-table { display: flex; flex-direction: column; gap: 1px; }
+  .perf-row { display: flex; align-items: center; gap: 6px; padding: 6px 6px; border-radius: 5px; font-size: 12px; }
+  .perf-row-alt { background: #0B0F14; }
+  .perf-rank { color: #4B5563; min-width: 16px; font-weight: 600; font-size: 11px; }
+  .perf-title { flex: 1; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .perf-metric { color: #C4B5FD; font-weight: 600; min-width: 54px; text-align: right; font-size: 11px; flex-shrink: 0; }
+  .perf-reach { color: #6B7280; min-width: 50px; text-align: right; font-size: 11px; flex-shrink: 0; }
+  .ins-open-link { color: #4B5563; text-decoration: none; font-size: 12px; padding-left: 2px; flex-shrink: 0; }
+  .ins-open-link:hover { color: #C4B5FD; }
+  /* Day bars */
+  .day-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .day-label { color: #9CA3AF; min-width: 28px; font-size: 11px; }
+  .day-bar-track { flex: 1; background: #1F2937; border-radius: 3px; height: 6px; overflow: hidden; }
+  .day-bar-fill { height: 100%; background: #374151; border-radius: 3px; }
+  .day-bar-fill.top { background: #22C55E; }
+  .day-val { color: #6B7280; min-width: 28px; text-align: right; font-size: 11px; }
+  .ins-best-day-line { font-size: 12px; color: #E5E7EB; margin-bottom: 6px; }
+  .ins-note { font-size: 11px; color: #374151; margin-bottom: 8px; font-style: italic; }
+  /* Trend */
+  .ins-trend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .ins-trend-arrow { font-size: 24px; line-height: 1; }
+  .ins-trend-dir { font-size: 16px; font-weight: 600; }
+  .ins-trend-pct { font-size: 13px; font-weight: 600; }
+  .ins-trend-detail { font-size: 12px; color: #9CA3AF; }
+  .ins-trend-detail strong { color: #E5E7EB; }
+  @media (max-width: 620px) { .ins-columns { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -172,10 +222,12 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('generate')">Generate</button>
-    <button class="tab" onclick="switchTab('queue')">Queue <span id="queue-count"></span></button>
+    <button class="tab active" data-tab="generate" onclick="switchTab('generate')">Generate</button>
+    <button class="tab" data-tab="insights" onclick="switchTab('insights')">Insights</button>
+    <button class="tab" data-tab="queue" onclick="switchTab('queue')">Queue <span id="queue-count"></span></button>
   </div>
 
+  <!-- ── Generate tab ─────────────────────────────────────────── -->
   <div id="tab-generate" class="section active">
     <div class="controls">
       <div>
@@ -221,6 +273,28 @@
     <div id="ideas-list"></div>
   </div>
 
+  <!-- ── Insights tab ─────────────────────────────────────────── -->
+  <div id="tab-insights" class="section">
+    <div class="ins-tab-header">
+      <div>
+        <div class="ins-tab-title">Performance Insights</div>
+        <div class="ins-tab-sub">30-day data from Windsor.ai · Refresh before generating</div>
+        <div class="ins-last-refresh" id="ins-last-refresh"></div>
+      </div>
+      <button class="btn-ins-refresh" id="btn-ins-refresh" onclick="refreshInsightsTab()">↻ Refresh</button>
+    </div>
+
+    <div id="ins-loading" class="ins-loading" style="display:none">
+      <span style="font-size:18px">⏳</span> Fetching insights…
+    </div>
+
+    <div id="ins-body" class="ins-columns">
+      <div class="ins-col" id="ins-col-pinterest"></div>
+      <div class="ins-col" id="ins-col-instagram"></div>
+    </div>
+  </div>
+
+  <!-- ── Queue tab ────────────────────────────────────────────── -->
   <div id="tab-queue" class="section">
     <div class="queue-stats">
       <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total</div></div>
@@ -256,12 +330,13 @@ let canvaConnected = false;
 let brandTemplateId = localStorage.getItem('npm_brand_template_id') || '';
 
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', ['generate', 'queue'][i] === name);
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
   });
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  if (name === 'queue') renderQueue();
+  if (name === 'queue')    renderQueue();
+  if (name === 'insights') renderInsightsTab();
 }
 
 function setStatus(msg, type) {
@@ -270,7 +345,7 @@ function setStatus(msg, type) {
   el.className = 'status' + (type ? ' ' + type : '');
 }
 
-// ── Windsor insights ─────────────────────────────────────────────
+// ── Windsor insights (shared state) ──────────────────────────────
 let igInsights  = null;
 let pinInsights = null;
 
@@ -292,7 +367,6 @@ function toggleWindsorDetails() {
 
 async function loadInsights(force = false) {
   const qs = force ? '?force=true' : '';
-  // Fire both in parallel; each updates its own cache slot
   const [igRes, pinRes] = await Promise.allSettled([
     fetch(API + '/windsor/insights'           + qs).then(r => r.json()).catch(() => null),
     fetch(API + '/windsor/pinterest-insights' + qs).then(r => r.json()).catch(() => null),
@@ -336,18 +410,15 @@ function renderInsightsPanel() {
 
   panel.className = 'windsor-panel active';
 
-  // Status line
   const parts = [];
   if (hasPin) parts.push(`📌 Pinterest: ${pinInsights.total_posts} pins`);
   if (hasIg)  parts.push(`📸 Instagram: ${igInsights.total_posts} posts`);
   label.textContent = parts.join(' · ');
 
-  // Most recent fetch time
   const newest = [igInsights?.fetched_at, pinInsights?.fetched_at]
     .filter(Boolean).sort().at(-1);
   meta.textContent = newest ? `Last fetched ${formatAge(new Date(newest))}` : '';
 
-  // Summary stats (prefer Pinterest since it's primary)
   const primary = hasPin ? pinInsights : igInsights;
   const agg     = primary.aggregate || {};
   const statRows = [];
@@ -356,14 +427,12 @@ function renderInsightsPanel() {
   if (agg.avg_reach      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_reach}</span> <span class="lbl">avg reach</span></div>`);
   stats.innerHTML = statRows.join('');
 
-  // Expand button
   expandBtn.style.display = 'inline-flex';
   renderDetails();
   renderBanner();
 }
 
 function renderDetails() {
-  // Per-platform breakdown
   const platforms = document.getElementById('windsor-platforms');
   const rows = [];
   if (pinInsights?.total_posts > 0) {
@@ -376,7 +445,6 @@ function renderDetails() {
   }
   platforms.innerHTML = rows.join('');
 
-  // Top posts — merge Pinterest (primary) and Instagram, take top 3
   const topPostsEl = document.getElementById('windsor-top-posts');
   const allTop = [
     ...(pinInsights?.top_posts || []).map(p => ({ ...p, _src: '📌' })),
@@ -399,7 +467,6 @@ function renderDetails() {
     topPostsEl.innerHTML = '';
   }
 
-  // Date range
   const dateRangeEl = document.getElementById('windsor-date-range');
   const ranges = [];
   if (pinInsights?.date_range?.from) ranges.push(`Pinterest: ${pinInsights.date_range.from} → ${pinInsights.date_range.to || 'today'}`);
@@ -413,10 +480,7 @@ function renderBanner() {
   const hasPin  = pinInsights?.insight_text && pinInsights.total_posts > 0;
   const hasIg   = igInsights?.insight_text  && igInsights.total_posts  > 0;
 
-  if (!hasPin && !hasIg) {
-    banner.className = 'insights-banner';
-    return;
-  }
+  if (!hasPin && !hasIg) { banner.className = 'insights-banner'; return; }
   if (!enabled) {
     banner.className = 'insights-banner visible disabled';
     banner.innerHTML = '<strong>Insights off</strong> — generation will use base prompt only. Toggle "Use in generation" to re-enable.';
@@ -444,6 +508,294 @@ function formatAge(date) {
   if (diffH >= 1) return `${diffH}h ${diffM}m ago`;
   return `${diffM}m ago`;
 }
+
+// ── Insights tab rendering ────────────────────────────────────────
+
+async function renderInsightsTab() {
+  const loading = document.getElementById('ins-loading');
+  const body    = document.getElementById('ins-body');
+
+  // Fetch if we have nothing yet
+  if (!igInsights && !pinInsights) {
+    loading.style.display = 'flex';
+    body.style.display    = 'none';
+    await loadInsights(false);
+    loading.style.display = 'none';
+    body.style.display    = 'grid';
+  }
+
+  renderInsightsCol('pinterest', pinInsights);
+  renderInsightsCol('instagram', igInsights);
+  updateLastRefreshLabel();
+}
+
+async function refreshInsightsTab() {
+  const btn     = document.getElementById('btn-ins-refresh');
+  const loading = document.getElementById('ins-loading');
+  const body    = document.getElementById('ins-body');
+
+  btn.disabled     = true;
+  btn.textContent  = 'Refreshing…';
+  loading.style.display = 'flex';
+  body.style.display    = 'none';
+
+  await loadInsights(true);
+
+  loading.style.display = 'none';
+  body.style.display    = 'grid';
+  btn.disabled    = false;
+  btn.textContent = '↻ Refresh';
+
+  renderInsightsCol('pinterest', pinInsights);
+  renderInsightsCol('instagram', igInsights);
+  updateLastRefreshLabel();
+}
+
+function renderInsightsCol(platform, data) {
+  const el    = document.getElementById('ins-col-' + platform);
+  const emoji = platform === 'pinterest' ? '📌' : '📸';
+  const name  = platform === 'pinterest' ? 'Pinterest' : 'Instagram';
+
+  if (!data || data.total_posts === 0) {
+    el.innerHTML = `
+      <div class="ins-platform-label">${emoji} ${name}</div>
+      <div class="ins-card">
+        <div class="ins-empty">
+          <div style="font-size:28px;margin-bottom:10px">${emoji}</div>
+          <div style="margin-bottom:6px">No ${name} data yet</div>
+          <div style="color:#6B7280;font-size:12px">Connect your account in <a href="https://windsor.ai" target="_blank">Windsor.ai</a> then click Refresh</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const agg       = data.aggregate || {};
+  const freshness = getFreshness(data.fetched_at);
+
+  let html = `<div class="ins-platform-label">${emoji} ${name}</div>`;
+  html += buildHeaderCard(data, agg, freshness, platform);
+  html += buildTopPerformers(data.top_posts || [], platform);
+  html += buildContentTypeBreakdown(data.top_posts || []);
+  html += buildBestTimes(data.day_breakdown, data.total_posts);
+  html += buildTrend(data.daily_data, platform);
+
+  el.innerHTML = html;
+}
+
+function getFreshness(fetchedAt) {
+  if (!fetchedAt) return { status: 'red', label: 'No data', color: '#F87171' };
+  const ageH = (Date.now() - new Date(fetchedAt).getTime()) / 3600000;
+  if (ageH < 6)  return { status: 'green',  label: `${Math.round(ageH * 60)}m ago`,       color: '#22C55E' };
+  if (ageH < 24) return { status: 'yellow', label: `${Math.round(ageH)}h ago`,             color: '#F59E0B' };
+  return              { status: 'yellow', label: `${Math.round(ageH / 24)}d ago`,          color: '#F59E0B' };
+}
+
+function buildHeaderCard(data, agg, freshness, platform) {
+  const dr        = data.date_range || {};
+  const dateLabel = dr.from ? `${dr.from} → ${dr.to || 'today'}` : '';
+  const primaryStatLabel = platform === 'pinterest' ? 'Avg Saves' : 'Avg Interactions';
+  const primaryStatVal   = platform === 'pinterest' ? (agg.avg_saves ?? 0) : (agg.avg_engagement ?? 0);
+
+  return `
+    <div class="ins-card ins-header-card">
+      <div class="ins-card-stats">
+        <div class="ins-stat">
+          <div class="ins-stat-val">${data.total_posts}</div>
+          <div class="ins-stat-lbl">Posts</div>
+        </div>
+        <div class="ins-stat">
+          <div class="ins-stat-val">${agg.avg_reach ?? 0}</div>
+          <div class="ins-stat-lbl">Avg Reach</div>
+        </div>
+        <div class="ins-stat">
+          <div class="ins-stat-val">${primaryStatVal}</div>
+          <div class="ins-stat-lbl">${primaryStatLabel}</div>
+        </div>
+        <div class="ins-stat">
+          <div class="ins-stat-val" style="display:flex;align-items:center;gap:5px;font-size:13px">
+            <span style="width:8px;height:8px;border-radius:50%;background:${freshness.color};display:inline-block;flex-shrink:0"></span>
+            ${freshness.label}
+          </div>
+          <div class="ins-stat-lbl">Data age</div>
+        </div>
+      </div>
+      ${dateLabel ? `<div class="ins-date-range">${dateLabel}</div>` : ''}
+    </div>`;
+}
+
+function buildTopPerformers(posts, platform) {
+  if (!posts.length) {
+    return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="ins-empty-sm">No post data available</div></div>`;
+  }
+
+  const rows = posts.map((p, i) => {
+    // Label priority: title/caption → media_type + date (Instagram) → pin title fallback
+    let raw = p.title || '';
+    if (!raw && platform === 'instagram') {
+      raw = `${(p.media_type || 'Post')} · ${p.date || ''}`.trim();
+    }
+    const title = raw.length > 48 ? raw.slice(0, 45) + '…' : (raw || '—');
+    const metric    = platform === 'pinterest' ? p.saves       : p.engagement;
+    const metricLbl = platform === 'pinterest' ? 'saves'       : 'eng';
+    const reach     = platform === 'pinterest' ? p.impressions : p.reach;
+    const href      = p.url || (platform === 'pinterest' && p.pin_id ? `https://www.pinterest.com/pin/${p.pin_id}/` : null);
+    const openLink  = href ? `<a class="ins-open-link" href="${escapeHtml(href)}" target="_blank" title="Open">↗</a>` : '';
+    const rowClass  = i % 2 === 0 ? 'perf-row perf-row-alt' : 'perf-row';
+    return `
+      <div class="${rowClass}">
+        <span class="perf-rank">${i + 1}</span>
+        <span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span>
+        <span class="perf-metric">${metric} ${metricLbl}</span>
+        <span class="perf-reach">${reach} reach</span>
+        ${openLink}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="ins-card">
+      <div class="ins-section-title">Top Performers</div>
+      <div class="perf-table">${rows}</div>
+    </div>`;
+}
+
+function buildContentTypeBreakdown(posts) {
+  const hasCT = posts.some(p => p.content_type);
+
+  if (!hasCT) {
+    return `
+      <div class="ins-card">
+        <div class="ins-section-title">Content Type Breakdown</div>
+        <div class="ins-empty-sm">Content type data not available — tag your ideas to unlock this view</div>
+      </div>`;
+  }
+
+  const groups = {};
+  for (const p of posts) {
+    const ct = p.content_type || 'unknown';
+    if (!groups[ct]) groups[ct] = { count: 0, totalEng: 0 };
+    groups[ct].count++;
+    groups[ct].totalEng += p.engagement || p.saves || 0;
+  }
+  const total = posts.length;
+  const maxPct = Math.max(...Object.values(groups).map(g => Math.round(g.count / total * 100)));
+  const bars = Object.entries(groups).map(([ct, g]) => {
+    const pct = Math.round(g.count / total * 100);
+    const avg = g.count ? Math.round(g.totalEng / g.count) : 0;
+    const w   = maxPct > 0 ? Math.round(pct / maxPct * 100) : 0;
+    const isTop = pct === maxPct;
+    return `<div class="day-bar-row">
+      <span class="day-label" style="min-width:70px">${ct.replace(/_/g,' ')}</span>
+      <div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${w}%"></div></div>
+      <span class="day-val" style="min-width:70px;text-align:right">${pct}% · ${avg} avg</span>
+    </div>`;
+  }).join('');
+
+  return `<div class="ins-card"><div class="ins-section-title">Content Type Breakdown</div>${bars}</div>`;
+}
+
+function buildBestTimes(dayBreakdown, totalPosts) {
+  if (!dayBreakdown || dayBreakdown.length === 0) {
+    const msg = (totalPosts || 0) < 10
+      ? 'Need more posts to determine best times'
+      : 'Day breakdown not available in this dataset';
+    return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div><div class="ins-empty-sm">${msg}</div></div>`;
+  }
+
+  const best    = dayBreakdown[0]; // already sorted desc by avg_reach
+  const maxR    = Math.max(...dayBreakdown.map(d => d.avg_reach));
+  const DOW_ORDER = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  const bars = [...dayBreakdown]
+    .sort((a, b) => DOW_ORDER.indexOf(a.day) - DOW_ORDER.indexOf(b.day))
+    .map(d => {
+      const pct   = maxR > 0 ? Math.round(d.avg_reach / maxR * 100) : 0;
+      const isTop = d.day === best.day && maxR > 0;
+      return `<div class="day-bar-row">
+        <span class="day-label">${d.day}</span>
+        <div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${pct}%"></div></div>
+        <span class="day-val">${d.avg_reach}</span>
+      </div>`;
+    }).join('');
+
+  const bestLine = maxR > 0
+    ? `<div class="ins-best-day-line">Best day: <strong style="color:#22C55E">${best.day}</strong> <span style="color:#6B7280">(avg reach ${best.avg_reach})</span></div>`
+    : `<div class="ins-best-day-line" style="color:#4B5563">All reach values are zero — waiting for data to populate</div>`;
+
+  return `
+    <div class="ins-card">
+      <div class="ins-section-title">Best Posting Times</div>
+      ${bestLine}
+      <div class="ins-note">Hour-of-day not available — Windsor provides daily-level data only</div>
+      ${bars}
+    </div>`;
+}
+
+function buildTrend(dailyData, platform) {
+  const metric = platform === 'pinterest' ? 'impressions' : 'reach';
+  const trend  = computeTrend(dailyData, metric);
+
+  if (!trend) {
+    return `
+      <div class="ins-card">
+        <div class="ins-section-title">Reach Trend</div>
+        <div class="ins-empty-sm">Not enough data yet — need 14+ days of history</div>
+      </div>`;
+  }
+
+  const arrow  = trend.dir === 'up' ? '↑' : trend.dir === 'down' ? '↓' : '→';
+  const color  = trend.dir === 'up' ? '#22C55E' : trend.dir === 'down' ? '#F87171' : '#F59E0B';
+  const change = trend.priorAvg > 0 ? Math.round((trend.lastAvg - trend.priorAvg) / trend.priorAvg * 100) : 0;
+  const dirLabel = trend.dir.charAt(0).toUpperCase() + trend.dir.slice(1);
+
+  return `
+    <div class="ins-card">
+      <div class="ins-section-title">Reach Trend</div>
+      <div class="ins-trend-row">
+        <span class="ins-trend-arrow" style="color:${color}">${arrow}</span>
+        <span class="ins-trend-dir"   style="color:${color}">${dirLabel}</span>
+        <span class="ins-trend-pct"   style="color:${color}">${change > 0 ? '+' : ''}${change}%</span>
+      </div>
+      <div class="ins-trend-detail">
+        Last 7 days avg: <strong>${trend.lastAvg}</strong> &nbsp;vs&nbsp; prior 7 days: <strong>${trend.priorAvg}</strong>
+      </div>
+    </div>`;
+}
+
+function formatLastRefresh(isoString) {
+  if (!isoString) return null;
+  const d      = new Date(isoString);
+  const diffMs = Date.now() - d.getTime();
+  const diffH  = diffMs / 3600000;
+  const diffD  = Math.floor(diffMs / 86400000);
+  const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  if (diffMs < 60000)   return 'Just now';
+  if (diffH  < 1)       return `${Math.round(diffMs / 60000)}m ago`;
+  if (diffH  < 24)      return `Today at ${timeStr}`;
+  if (diffD  === 1)     return `Yesterday at ${timeStr}`;
+  if (diffD  < 7)       return `${diffD} days ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function updateLastRefreshLabel() {
+  const el = document.getElementById('ins-last-refresh');
+  if (!el) return;
+  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at]
+    .filter(Boolean).sort().at(-1);
+  el.textContent = newest ? `Last refreshed: ${formatLastRefresh(newest)}` : '';
+}
+
+function computeTrend(dailyData, metric) {
+  if (!dailyData || dailyData.length < 4) return null;
+  const sorted   = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
+  const last7    = sorted.slice(-7);
+  const prior7   = sorted.slice(-14, -7);
+  if (!prior7.length) return null;
+  const lastAvg  = Math.round(last7.reduce((s, d)  => s + (d[metric] || 0), 0) / last7.length);
+  const priorAvg = Math.round(prior7.reduce((s, d) => s + (d[metric] || 0), 0) / prior7.length);
+  const dir = lastAvg > priorAvg * 1.1 ? 'up' : lastAvg < priorAvg * 0.9 ? 'down' : 'flat';
+  return { dir, lastAvg, priorAvg };
+}
+
 // ─────────────────────────────────────────────────────────────────
 
 async function loadHealth() {
@@ -455,7 +807,6 @@ async function loadHealth() {
     if (!data.windsor_key_set) {
       renderInsightsPanelError('Add WINDSOR_API_KEY to .env to enable');
     }
-    // Restore toggle from localStorage
     const savedToggle = localStorage.getItem('npm_insights_enabled');
     if (savedToggle === 'false') {
       const tog = document.getElementById('insights-toggle');
@@ -603,8 +954,8 @@ function makeCard(idea) {
   return div;
 }
 
-function escapeHtml(s) { return String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
-function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
+function escapeHtml(s) { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function escapeAttr(s) { return escapeHtml(s).replace(/'/g, '&#39;'); }
 
 async function createDesign(id) {
   if (!canvaConnected) { setStatus('Connect Canva first.', 'error'); return; }
@@ -624,7 +975,6 @@ async function createDesign(id) {
     const data = await res.json();
     if (data.error) throw new Error(JSON.stringify(data.error));
 
-    // Refresh idea data
     const refreshed = await fetch(API + '/ideas').then(r => r.json());
     allIdeas = refreshed.ideas;
     refreshCard(allIdeas.find(i => i.id === id));
@@ -692,15 +1042,15 @@ async function saveEdit(id) {
 }
 
 function updateCounts() {
-  const total = allIdeas.length;
+  const total    = allIdeas.length;
   const approved = allIdeas.filter(i => i.status === 'approved').length;
   const designed = allIdeas.filter(i => i.canva_design_id).length;
-  const pending = allIdeas.filter(i => i.status === 'pending').length;
+  const pending  = allIdeas.filter(i => i.status === 'pending').length;
   document.getElementById('queue-count').textContent = total ? `(${total})` : '';
-  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-total').textContent    = total;
   document.getElementById('s-approved').textContent = approved;
   document.getElementById('s-designed').textContent = designed;
-  document.getElementById('s-pending').textContent = pending;
+  document.getElementById('s-pending').textContent  = pending;
 }
 
 function renderQueue() {
