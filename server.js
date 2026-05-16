@@ -311,10 +311,27 @@ app.get('/api/windsor/insights', async (req, res) => {
       engagement:  scoreEngagement(p, 'media_'),
     }));
 
-    const topPosts      = [...enriched].sort((a, b) => b.engagement - a.engagement).slice(0, 5);
-    const totalPosts    = enriched.length;
-    const avgEngagement = Math.round(enriched.reduce((s, p) => s + p.engagement, 0) / totalPosts);
-    const avgReach      = Math.round(enriched.reduce((s, p) => s + p.reach,      0) / totalPosts);
+    // Dedupe by media_id: Windsor returns one row per daily snapshot per post.
+    // Sum metrics across all date rows so each unique post has 30-day totals.
+    const igMap = new Map();
+    for (const p of enriched) {
+      if (igMap.has(p.media_id)) {
+        const e = igMap.get(p.media_id);
+        e.impressions += p.impressions;
+        e.reach       += p.reach;
+        e.likes       += p.likes;
+        e.comments    += p.comments;
+        e.engagement  += p.engagement;
+      } else {
+        igMap.set(p.media_id, { ...p });
+      }
+    }
+    const uniquePosts = [...igMap.values()];
+
+    const topPosts      = [...uniquePosts].sort((a, b) => b.engagement - a.engagement).slice(0, 5);
+    const totalPosts    = uniquePosts.length;
+    const avgEngagement = totalPosts ? Math.round(uniquePosts.reduce((s, p) => s + p.engagement, 0) / totalPosts) : 0;
+    const avgReach      = totalPosts ? Math.round(uniquePosts.reduce((s, p) => s + p.reach,      0) / totalPosts) : 0;
     const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
 
     const insightText = buildInsightText({ platform: 'Instagram', totalPosts, avgEngagement, avgReach, topPosts });
@@ -403,12 +420,29 @@ app.get('/api/windsor/pinterest-insights', async (req, res) => {
       engagement:  Number(p.engagement) || Number(p.saves) || Number(p.pin_clicks) || 0,
     }));
 
+    // Dedupe by pin_id: Windsor returns one row per daily snapshot per pin.
+    // Sum metrics across all date rows so each unique pin has 30-day totals.
+    const pinMap = new Map();
+    for (const p of enriched) {
+      if (pinMap.has(p.pin_id)) {
+        const e = pinMap.get(p.pin_id);
+        e.impressions += p.impressions;
+        e.saves       += p.saves;
+        e.clicks      += p.clicks;
+        e.outbound    += p.outbound;
+        e.engagement  += p.engagement;
+      } else {
+        pinMap.set(p.pin_id, { ...p });
+      }
+    }
+    const uniquePins = [...pinMap.values()];
+
     // Pinterest primary sort: saves (most intent-driven metric); fallback to engagement
-    const topPosts      = [...enriched].sort((a, b) => (b.saves || b.engagement) - (a.saves || a.engagement)).slice(0, 5);
-    const totalPosts    = enriched.length;
-    const avgEngagement = Math.round(enriched.reduce((s, p) => s + p.engagement, 0) / totalPosts);
-    const avgSaves      = Math.round(enriched.reduce((s, p) => s + p.saves,      0) / totalPosts);
-    const avgReach      = Math.round(enriched.reduce((s, p) => s + p.impressions,0) / totalPosts);
+    const topPosts      = [...uniquePins].sort((a, b) => (b.saves || b.engagement) - (a.saves || a.engagement)).slice(0, 5);
+    const totalPosts    = uniquePins.length;
+    const avgEngagement = totalPosts ? Math.round(uniquePins.reduce((s, p) => s + p.engagement, 0) / totalPosts) : 0;
+    const avgSaves      = totalPosts ? Math.round(uniquePins.reduce((s, p) => s + p.saves,      0) / totalPosts) : 0;
+    const avgReach      = totalPosts ? Math.round(uniquePins.reduce((s, p) => s + p.impressions,0) / totalPosts) : 0;
     const dateRange     = { from: enriched.at(-1)?.date, to: enriched[0]?.date };
 
     const insightText = buildInsightText({ platform: 'Pinterest', totalPosts, avgEngagement, avgReach, avgSaves, topPosts });
