@@ -12,19 +12,11 @@
   .brand-line { width: 3px; height: 28px; background: #22C55E; border-radius: 2px; }
   h1 { font-size: 22px; font-weight: 600; color: #F9FAFB; }
   .subtitle { font-size: 13px; color: #9CA3AF; margin-bottom: 1.5rem; padding-left: 13px; }
-  .canva-status { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 18px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .canva-status.connected { border-left: 3px solid #22C55E; }
-  .canva-status.disconnected { border-left: 3px solid #F59E0B; }
-  .canva-status-text { font-size: 13px; color: #E5E7EB; }
-  .canva-status-text strong { color: #F9FAFB; }
-  .canva-status-text .muted { color: #9CA3AF; font-size: 12px; }
-  .btn-canva { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; }
-  .btn-canva-connect { background: #8B3DFF; color: #fff; }
-  .btn-canva-disconnect { background: transparent; color: #9CA3AF; border: 1px solid #374151; }
+  /* Windsor panel */
   .windsor-panel { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 18px; margin-bottom: 1.25rem; }
-  .windsor-panel.active { border-left: 3px solid #8B3DFF; }
+  .windsor-panel.active   { border-left: 3px solid #8B3DFF; }
   .windsor-panel.inactive { border-left: 3px solid #374151; }
-  .windsor-panel.no-key { border-left: 3px solid #F59E0B; }
+  .windsor-panel.no-key   { border-left: 3px solid #F59E0B; }
   .windsor-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .windsor-info { flex: 1; min-width: 0; }
   .windsor-title { font-size: 13px; color: #E5E7EB; }
@@ -57,16 +49,19 @@
   .top-post-link:hover { color: #9CA3AF; text-decoration: underline; }
   .top-post-title { color: #9CA3AF; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
   .windsor-date-range { font-size: 11px; color: #4B5563; margin-top: 8px; }
+  /* Insights banner */
   .insights-banner { background: #130f23; border: 1px solid #2d1f4e; border-radius: 8px; padding: 10px 14px; margin-bottom: 1rem; font-size: 12px; color: #C4B5FD; display: none; }
   .insights-banner.visible { display: block; }
   .insights-banner strong { color: #DDD6FE; }
   .insights-banner.disabled { background: #111827; border-color: #1F2937; color: #4B5563; }
+  /* Tabs */
   .tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid #1F2937; }
   .tab { font-size: 13px; padding: 10px 18px; border: none; background: none; cursor: pointer; color: #9CA3AF; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; }
   .tab.active { color: #F9FAFB; border-bottom: 2px solid #22C55E; }
   .tab:hover:not(.active) { color: #E5E7EB; }
   .section { display: none; }
   .section.active { display: block; }
+  /* Controls */
   .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
   label { display: block; font-size: 12px; color: #9CA3AF; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
   select, input[type="text"], input[type="password"], textarea {
@@ -81,19 +76,19 @@
   .status { font-size: 12px; color: #9CA3AF; margin-bottom: 1rem; min-height: 18px; }
   .status.error { color: #F87171; }
   .status.ok { color: #22C55E; }
+  /* Idea cards */
   .idea-card { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 12px; }
   .idea-card.approved { border-color: #22C55E; border-left: 3px solid #22C55E; }
-  .idea-card.skipped { opacity: 0.35; }
-  .idea-card.designed { border-left: 3px solid #8B3DFF; }
+  .idea-card.skipped  { opacity: 0.35; }
   .idea-meta { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
   .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
   .badge-pinterest { background: #7F1D1D; color: #FCA5A5; }
-  .badge-reel { background: #1E3A8A; color: #93C5FD; }
-  .badge-both { background: #14532D; color: #86EFAC; }
-  .badge-type { background: #1F2937; color: #9CA3AF; }
-  .badge-designed { background: #4C1D95; color: #C4B5FD; }
+  .badge-reel      { background: #1E3A8A; color: #93C5FD; }
+  .badge-both      { background: #14532D; color: #86EFAC; }
+  .badge-type      { background: #1F2937; color: #9CA3AF; }
+  .badge-seasonal  { background: #1a2e1a; color: #86EFAC; }
   .idea-topic { font-size: 14px; font-weight: 600; color: #F9FAFB; margin-bottom: 8px; }
-  .idea-hook { font-size: 16px; color: #F9FAFB; border-left: 3px solid #22C55E; padding-left: 12px; margin-bottom: 12px; line-height: 1.4; font-weight: 500; }
+  .idea-hook  { font-size: 16px; color: #F9FAFB; border-left: 3px solid #22C55E; padding-left: 12px; margin-bottom: 12px; line-height: 1.4; font-weight: 500; }
   .idea-title { font-size: 13px; color: #D1D5DB; font-weight: 600; margin-bottom: 6px; }
   .idea-description { font-size: 13px; color: #9CA3AF; line-height: 1.6; margin-bottom: 10px; }
   .idea-visual { font-size: 12px; color: #9CA3AF; background: #0B0F14; border: 1px solid #1F2937; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
@@ -101,31 +96,26 @@
   .idea-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-approve { font-size: 12px; padding: 6px 16px; background: transparent; color: #22C55E; border: 1px solid #22C55E; border-radius: 6px; cursor: pointer; font-weight: 600; }
   .btn-approve.approved { background: #22C55E; color: #0B0F14; }
-  .btn-design { font-size: 12px; padding: 6px 16px; background: transparent; color: #C4B5FD; border: 1px solid #8B3DFF; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  .btn-design.designed { background: #8B3DFF; color: #fff; }
   .btn-sm { font-size: 12px; padding: 6px 14px; background: transparent; color: #9CA3AF; border: 1px solid #374151; border-radius: 6px; cursor: pointer; }
   .btn-sm:hover { border-color: #6B7280; color: #E5E7EB; }
   .edit-box { background: #0B0F14; border: 1px solid #1F2937; border-radius: 8px; padding: 1rem; margin-top: 10px; }
   .edit-box label { margin-bottom: 4px; }
   .edit-box textarea, .edit-box input { margin-bottom: 10px; min-height: 50px; }
   .btn-save { font-size: 12px; padding: 6px 14px; background: #22C55E; color: #0B0F14; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  /* Queue */
   .queue-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
   .stat { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 16px; text-align: center; }
-  .stat-num { font-size: 26px; font-weight: 600; color: #F9FAFB; }
+  .stat-num   { font-size: 26px; font-weight: 600; color: #F9FAFB; }
   .stat-label { font-size: 11px; color: #9CA3AF; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .queue-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .queue-actions { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .btn-canva-mcp { background: #22C55E; color: #0B0F14; border-color: #22C55E; font-weight: 700; }
+  .btn-canva-mcp:hover { background: #16A34A; border-color: #16A34A; color: #fff; }
+  .canva-prompt-wrap { display: none; background: #111827; border: 1px solid #22C55E; border-radius: 10px; padding: 16px; margin-bottom: 1.25rem; }
+  .canva-prompt-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .canva-prompt-label span { color: #22C55E; font-size: 12px; font-weight: 600; display: none; }
+  .canva-prompt-preview { width: 100%; min-height: 260px; background: #0B0F14; border: 1px solid #374151; border-radius: 6px; color: #9CA3AF; font-size: 12px; font-family: 'Courier New', monospace; padding: 12px; resize: vertical; line-height: 1.6; }
   .empty { text-align: center; padding: 3rem; color: #6B7280; font-size: 14px; }
-  .design-link { font-size: 12px; color: #C4B5FD; text-decoration: none; }
-  .design-link:hover { color: #DDD6FE; text-decoration: underline; }
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 2rem; }
-  .modal-overlay.active { display: flex; }
-  .modal { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 2rem; max-width: 500px; width: 100%; }
-  .modal h3 { color: #F9FAFB; font-size: 18px; margin-bottom: 12px; }
-  .modal p { color: #9CA3AF; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .modal label { color: #9CA3AF; }
-  .modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
-
-  /* ── Insights tab ─────────────────────────────────────────────── */
+  /* Insights tab */
   .ins-tab-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 12px; flex-wrap: wrap; }
   .ins-tab-title { font-size: 16px; font-weight: 600; color: #F9FAFB; }
   .ins-tab-sub { font-size: 12px; color: #6B7280; margin-top: 3px; }
@@ -149,17 +139,15 @@
   .ins-empty a { color: #C4B5FD; text-decoration: none; }
   .ins-empty a:hover { text-decoration: underline; }
   .ins-empty-sm { font-size: 12px; color: #4B5563; font-style: italic; padding: 4px 0; }
-  /* Top performers table */
   .perf-table { display: flex; flex-direction: column; gap: 1px; }
   .perf-row { display: flex; align-items: center; gap: 6px; padding: 6px 6px; border-radius: 5px; font-size: 12px; }
   .perf-row-alt { background: #0B0F14; }
-  .perf-rank { color: #4B5563; min-width: 16px; font-weight: 600; font-size: 11px; }
-  .perf-title { flex: 1; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .perf-rank   { color: #4B5563; min-width: 16px; font-weight: 600; font-size: 11px; }
+  .perf-title  { flex: 1; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .perf-metric { color: #C4B5FD; font-weight: 600; min-width: 54px; text-align: right; font-size: 11px; flex-shrink: 0; }
-  .perf-reach { color: #6B7280; min-width: 50px; text-align: right; font-size: 11px; flex-shrink: 0; }
+  .perf-reach  { color: #6B7280; min-width: 50px; text-align: right; font-size: 11px; flex-shrink: 0; }
   .ins-open-link { color: #4B5563; text-decoration: none; font-size: 12px; padding-left: 2px; flex-shrink: 0; }
   .ins-open-link:hover { color: #C4B5FD; }
-  /* Day bars */
   .day-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .day-label { color: #9CA3AF; min-width: 28px; font-size: 11px; }
   .day-bar-track { flex: 1; background: #1F2937; border-radius: 3px; height: 6px; overflow: hidden; }
@@ -168,11 +156,10 @@
   .day-val { color: #6B7280; min-width: 28px; text-align: right; font-size: 11px; }
   .ins-best-day-line { font-size: 12px; color: #E5E7EB; margin-bottom: 6px; }
   .ins-note { font-size: 11px; color: #374151; margin-bottom: 8px; font-style: italic; }
-  /* Trend */
   .ins-trend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
   .ins-trend-arrow { font-size: 24px; line-height: 1; }
-  .ins-trend-dir { font-size: 16px; font-weight: 600; }
-  .ins-trend-pct { font-size: 13px; font-weight: 600; }
+  .ins-trend-dir  { font-size: 16px; font-weight: 600; }
+  .ins-trend-pct  { font-size: 13px; font-weight: 600; }
   .ins-trend-detail { font-size: 12px; color: #9CA3AF; }
   .ins-trend-detail strong { color: #E5E7EB; }
   @media (max-width: 620px) { .ins-columns { grid-template-columns: 1fr; } }
@@ -184,19 +171,7 @@
     <div class="brand-line"></div>
     <h1>Net Positive Method — Content Pipeline</h1>
   </div>
-  <p class="subtitle">AI generates → you approve → Canva creates → Pinterest posts</p>
-
-  <div id="canva-status" class="canva-status disconnected">
-    <div class="canva-status-text">
-      <strong>Canva:</strong> <span id="canva-status-label">Not connected</span>
-      <div class="muted" id="canva-template-info"></div>
-    </div>
-    <div>
-      <button class="btn-canva btn-canva-connect" id="btn-connect-canva" onclick="connectCanva()">Connect Canva</button>
-      <button class="btn-canva btn-canva-disconnect" id="btn-disconnect-canva" onclick="disconnectCanva()" style="display:none">Disconnect</button>
-      <button class="btn-canva btn-canva-disconnect" onclick="openTemplateModal()" style="display:inline-block">Set template</button>
-    </div>
-  </div>
+  <p class="subtitle">AI generates → you approve → copy for Canva → post to Pinterest</p>
 
   <div id="windsor-panel" class="windsor-panel inactive">
     <div class="windsor-header">
@@ -248,11 +223,12 @@
       </div>
       <div>
         <label>Content mix</label>
-        <select id="mix">
+        <select id="mix" onchange="onMixChange()">
           <option value="balanced">Balanced</option>
           <option value="tracker">Tracker-heavy</option>
           <option value="tips">Finance tips only</option>
           <option value="sidehustle">Side hustle only</option>
+          <option value="seasonal">Seasonal 🌿</option>
         </select>
       </div>
       <div>
@@ -283,11 +259,9 @@
       </div>
       <button class="btn-ins-refresh" id="btn-ins-refresh" onclick="refreshInsightsTab()">↻ Refresh</button>
     </div>
-
     <div id="ins-loading" class="ins-loading" style="display:none">
       <span style="font-size:18px">⏳</span> Fetching insights…
     </div>
-
     <div id="ins-body" class="ins-columns">
       <div class="ins-col" id="ins-col-pinterest"></div>
       <div class="ins-col" id="ins-col-instagram"></div>
@@ -299,35 +273,28 @@
     <div class="queue-stats">
       <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total</div></div>
       <div class="stat"><div class="stat-num" id="s-approved">0</div><div class="stat-label">Approved</div></div>
-      <div class="stat"><div class="stat-num" id="s-designed">0</div><div class="stat-label">Designed</div></div>
+      <div class="stat"><div class="stat-num" id="s-skipped">0</div><div class="stat-label">Skipped</div></div>
       <div class="stat"><div class="stat-num" id="s-pending">0</div><div class="stat-label">Pending</div></div>
     </div>
     <div class="queue-actions">
-      <button class="btn-sm" onclick="exportCSV()">Export approved → CSV</button>
+      <button class="btn-sm btn-canva-mcp" onclick="copyCanvaPrompt()">📋 Copy for Canva</button>
+      <button class="btn-sm" onclick="exportCSV()">Export CSV</button>
       <button class="btn-sm" onclick="clearQueue()">Clear all</button>
     </div>
-    <div id="queue-list"><div class="empty">No ideas yet. Go to Generate.</div></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="template-modal">
-  <div class="modal">
-    <h3>Set Brand Template ID</h3>
-    <p>Paste your Canva Brand Template ID. You can find it in the Canva URL when viewing a brand template — usually starts with <code>EAH</code> or <code>BAF</code>.</p>
-    <label>Brand Template ID</label>
-    <input type="text" id="template-id-input" placeholder="EAHIMaRO6Hs" />
-    <div class="modal-actions">
-      <button class="btn-sm" onclick="closeTemplateModal()">Cancel</button>
-      <button class="btn-save" onclick="saveTemplateId()">Save</button>
+    <div class="canva-prompt-wrap" id="canva-prompt-wrap">
+      <div class="canva-prompt-label">
+        Canva MCP Prompt — paste into a new Claude conversation with Canva MCP enabled
+        <span id="canva-copy-confirm">✓ Copied!</span>
+      </div>
+      <textarea class="canva-prompt-preview" id="canva-prompt-preview" readonly></textarea>
     </div>
+    <div id="queue-list"><div class="empty">No ideas yet. Go to Generate.</div></div>
   </div>
 </div>
 
 <script>
 const API = '/api';
 let allIdeas = [];
-let canvaConnected = false;
-let brandTemplateId = localStorage.getItem('npm_brand_template_id') || '';
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => {
@@ -343,6 +310,13 @@ function setStatus(msg, type) {
   const el = document.getElementById('status');
   el.textContent = msg;
   el.className = 'status' + (type ? ' ' + type : '');
+}
+
+function onMixChange() {
+  // Seasonal always needs 15 ideas (8+4+3) — auto-select the 15 count
+  if (document.getElementById('mix').value === 'seasonal') {
+    document.getElementById('count').value = '15';
+  }
 }
 
 // ── Windsor insights (shared state) ──────────────────────────────
@@ -371,10 +345,8 @@ async function loadInsights(force = false) {
     fetch(API + '/windsor/insights'           + qs).then(r => r.json()).catch(() => null),
     fetch(API + '/windsor/pinterest-insights' + qs).then(r => r.json()).catch(() => null),
   ]);
-
   if (igRes.status  === 'fulfilled' && igRes.value?.success)  igInsights  = igRes.value.insights;
   if (pinRes.status === 'fulfilled' && pinRes.value?.success) pinInsights = pinRes.value.insights;
-
   renderInsightsPanel();
 }
 
@@ -399,34 +371,31 @@ function renderInsightsPanel() {
   const hasPin = pinInsights?.insight_text && pinInsights.total_posts > 0;
 
   if (!hasIg && !hasPin) {
-    panel.className     = 'windsor-panel inactive';
-    label.textContent   = 'No data yet';
-    meta.textContent    = igInsights?.warning || pinInsights?.warning || 'Click Refresh insights to fetch';
-    stats.innerHTML     = '';
+    panel.className   = 'windsor-panel inactive';
+    label.textContent = 'No data yet';
+    meta.textContent  = igInsights?.warning || pinInsights?.warning || 'Click Refresh insights to fetch';
+    stats.innerHTML   = '';
     expandBtn.style.display = 'none';
     renderBanner();
     return;
   }
 
   panel.className = 'windsor-panel active';
-
   const parts = [];
   if (hasPin) parts.push(`📌 Pinterest: ${pinInsights.total_posts} pins`);
   if (hasIg)  parts.push(`📸 Instagram: ${igInsights.total_posts} posts`);
   label.textContent = parts.join(' · ');
 
-  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at]
-    .filter(Boolean).sort().at(-1);
+  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at].filter(Boolean).sort().at(-1);
   meta.textContent = newest ? `Last fetched ${formatAge(new Date(newest))}` : '';
 
-  const primary = hasPin ? pinInsights : igInsights;
-  const agg     = primary.aggregate || {};
+  const primary  = hasPin ? pinInsights : igInsights;
+  const agg      = primary.aggregate || {};
   const statRows = [];
   if (agg.avg_engagement > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_engagement}</span> <span class="lbl">avg eng${hasPin ? ' (pin)' : ''}</span></div>`);
   if (agg.avg_saves      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_saves}</span> <span class="lbl">avg saves</span></div>`);
   if (agg.avg_reach      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_reach}</span> <span class="lbl">avg reach</span></div>`);
   stats.innerHTML = statRows.join('');
-
   expandBtn.style.display = 'inline-flex';
   renderDetails();
   renderBanner();
@@ -449,11 +418,7 @@ function renderDetails() {
   const allTop = [
     ...(pinInsights?.top_posts || []).map(p => ({ ...p, _src: '📌' })),
     ...(igInsights?.top_posts  || []).map(p => ({ ...p, _src: '📸' })),
-  ].sort((a, b) => {
-    const scoreA = a.saves || a.engagement || 0;
-    const scoreB = b.saves || b.engagement || 0;
-    return scoreB - scoreA;
-  }).slice(0, 3);
+  ].sort((a, b) => (b.saves || b.engagement || 0) - (a.saves || a.engagement || 0)).slice(0, 3);
 
   if (allTop.length) {
     const postRows = allTop.map((p, i) => {
@@ -515,7 +480,6 @@ async function renderInsightsTab() {
   const loading = document.getElementById('ins-loading');
   const body    = document.getElementById('ins-body');
 
-  // Fetch if we have nothing yet
   if (!igInsights && !pinInsights) {
     loading.style.display = 'flex';
     body.style.display    = 'none';
@@ -534,8 +498,8 @@ async function refreshInsightsTab() {
   const loading = document.getElementById('ins-loading');
   const body    = document.getElementById('ins-body');
 
-  btn.disabled     = true;
-  btn.textContent  = 'Refreshing…';
+  btn.disabled    = true;
+  btn.textContent = 'Refreshing…';
   loading.style.display = 'flex';
   body.style.display    = 'none';
 
@@ -545,7 +509,6 @@ async function refreshInsightsTab() {
   body.style.display    = 'grid';
   btn.disabled    = false;
   btn.textContent = '↻ Refresh';
-
   renderInsightsCol('pinterest', pinInsights);
   renderInsightsCol('instagram', igInsights);
   updateLastRefreshLabel();
@@ -578,39 +541,28 @@ function renderInsightsCol(platform, data) {
   html += buildContentTypeBreakdown(data.top_posts || []);
   html += buildBestTimes(data.day_breakdown, data.total_posts);
   html += buildTrend(data.daily_data, platform);
-
   el.innerHTML = html;
 }
 
 function getFreshness(fetchedAt) {
   if (!fetchedAt) return { status: 'red', label: 'No data', color: '#F87171' };
   const ageH = (Date.now() - new Date(fetchedAt).getTime()) / 3600000;
-  if (ageH < 6)  return { status: 'green',  label: `${Math.round(ageH * 60)}m ago`,       color: '#22C55E' };
-  if (ageH < 24) return { status: 'yellow', label: `${Math.round(ageH)}h ago`,             color: '#F59E0B' };
-  return              { status: 'yellow', label: `${Math.round(ageH / 24)}d ago`,          color: '#F59E0B' };
+  if (ageH < 6)  return { status: 'green',  label: `${Math.round(ageH * 60)}m ago`, color: '#22C55E' };
+  if (ageH < 24) return { status: 'yellow', label: `${Math.round(ageH)}h ago`,      color: '#F59E0B' };
+  return              { status: 'yellow', label: `${Math.round(ageH / 24)}d ago`,   color: '#F59E0B' };
 }
 
 function buildHeaderCard(data, agg, freshness, platform) {
   const dr        = data.date_range || {};
   const dateLabel = dr.from ? `${dr.from} → ${dr.to || 'today'}` : '';
-  const primaryStatLabel = platform === 'pinterest' ? 'Avg Saves' : 'Avg Interactions';
+  const primaryStatLabel = platform === 'pinterest' ? 'Avg Saves'        : 'Avg Interactions';
   const primaryStatVal   = platform === 'pinterest' ? (agg.avg_saves ?? 0) : (agg.avg_engagement ?? 0);
-
   return `
     <div class="ins-card ins-header-card">
       <div class="ins-card-stats">
-        <div class="ins-stat">
-          <div class="ins-stat-val">${data.total_posts}</div>
-          <div class="ins-stat-lbl">Posts</div>
-        </div>
-        <div class="ins-stat">
-          <div class="ins-stat-val">${agg.avg_reach ?? 0}</div>
-          <div class="ins-stat-lbl">Avg Reach</div>
-        </div>
-        <div class="ins-stat">
-          <div class="ins-stat-val">${primaryStatVal}</div>
-          <div class="ins-stat-lbl">${primaryStatLabel}</div>
-        </div>
+        <div class="ins-stat"><div class="ins-stat-val">${data.total_posts}</div><div class="ins-stat-lbl">Posts</div></div>
+        <div class="ins-stat"><div class="ins-stat-val">${agg.avg_reach ?? 0}</div><div class="ins-stat-lbl">Avg Reach</div></div>
+        <div class="ins-stat"><div class="ins-stat-val">${primaryStatVal}</div><div class="ins-stat-lbl">${primaryStatLabel}</div></div>
         <div class="ins-stat">
           <div class="ins-stat-val" style="display:flex;align-items:center;gap:5px;font-size:13px">
             <span style="width:8px;height:8px;border-radius:50%;background:${freshness.color};display:inline-block;flex-shrink:0"></span>
@@ -624,141 +576,70 @@ function buildHeaderCard(data, agg, freshness, platform) {
 }
 
 function buildTopPerformers(posts, platform) {
-  if (!posts.length) {
-    return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="ins-empty-sm">No post data available</div></div>`;
-  }
-
+  if (!posts.length) return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="ins-empty-sm">No post data available</div></div>`;
   const rows = posts.map((p, i) => {
-    // Label priority: title/caption → media_type + date (Instagram) → pin title fallback
     let raw = p.title || '';
-    if (!raw && platform === 'instagram') {
-      raw = `${(p.media_type || 'Post')} · ${p.date || ''}`.trim();
-    }
-    const title = raw.length > 48 ? raw.slice(0, 45) + '…' : (raw || '—');
+    if (!raw && platform === 'instagram') raw = `${(p.media_type || 'Post')} · ${p.date || ''}`.trim();
+    const title     = raw.length > 48 ? raw.slice(0, 45) + '…' : (raw || '—');
     const metric    = platform === 'pinterest' ? p.saves       : p.engagement;
     const metricLbl = platform === 'pinterest' ? 'saves'       : 'eng';
     const reach     = platform === 'pinterest' ? p.impressions : p.reach;
     const href      = p.url || (platform === 'pinterest' && p.pin_id ? `https://www.pinterest.com/pin/${p.pin_id}/` : null);
     const openLink  = href ? `<a class="ins-open-link" href="${escapeHtml(href)}" target="_blank" title="Open">↗</a>` : '';
     const rowClass  = i % 2 === 0 ? 'perf-row perf-row-alt' : 'perf-row';
-    return `
-      <div class="${rowClass}">
-        <span class="perf-rank">${i + 1}</span>
-        <span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span>
-        <span class="perf-metric">${metric} ${metricLbl}</span>
-        <span class="perf-reach">${reach} reach</span>
-        ${openLink}
-      </div>`;
+    return `<div class="${rowClass}"><span class="perf-rank">${i + 1}</span><span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span><span class="perf-metric">${metric} ${metricLbl}</span><span class="perf-reach">${reach} reach</span>${openLink}</div>`;
   }).join('');
-
-  return `
-    <div class="ins-card">
-      <div class="ins-section-title">Top Performers</div>
-      <div class="perf-table">${rows}</div>
-    </div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="perf-table">${rows}</div></div>`;
 }
 
 function buildContentTypeBreakdown(posts) {
   const hasCT = posts.some(p => p.content_type);
-
-  if (!hasCT) {
-    return `
-      <div class="ins-card">
-        <div class="ins-section-title">Content Type Breakdown</div>
-        <div class="ins-empty-sm">Content type data not available — tag your ideas to unlock this view</div>
-      </div>`;
-  }
-
+  if (!hasCT) return `<div class="ins-card"><div class="ins-section-title">Content Type Breakdown</div><div class="ins-empty-sm">Content type data not available — tag your ideas to unlock this view</div></div>`;
   const groups = {};
   for (const p of posts) {
     const ct = p.content_type || 'unknown';
     if (!groups[ct]) groups[ct] = { count: 0, totalEng: 0 };
-    groups[ct].count++;
-    groups[ct].totalEng += p.engagement || p.saves || 0;
+    groups[ct].count++; groups[ct].totalEng += p.engagement || p.saves || 0;
   }
-  const total = posts.length;
+  const total  = posts.length;
   const maxPct = Math.max(...Object.values(groups).map(g => Math.round(g.count / total * 100)));
-  const bars = Object.entries(groups).map(([ct, g]) => {
+  const bars   = Object.entries(groups).map(([ct, g]) => {
     const pct = Math.round(g.count / total * 100);
     const avg = g.count ? Math.round(g.totalEng / g.count) : 0;
     const w   = maxPct > 0 ? Math.round(pct / maxPct * 100) : 0;
-    const isTop = pct === maxPct;
-    return `<div class="day-bar-row">
-      <span class="day-label" style="min-width:70px">${ct.replace(/_/g,' ')}</span>
-      <div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${w}%"></div></div>
-      <span class="day-val" style="min-width:70px;text-align:right">${pct}% · ${avg} avg</span>
-    </div>`;
+    return `<div class="day-bar-row"><span class="day-label" style="min-width:70px">${ct.replace(/_/g,' ')}</span><div class="day-bar-track"><div class="day-bar-fill${pct === maxPct ? ' top' : ''}" style="width:${w}%"></div></div><span class="day-val" style="min-width:70px;text-align:right">${pct}% · ${avg} avg</span></div>`;
   }).join('');
-
   return `<div class="ins-card"><div class="ins-section-title">Content Type Breakdown</div>${bars}</div>`;
 }
 
 function buildBestTimes(dayBreakdown, totalPosts) {
   if (!dayBreakdown || dayBreakdown.length === 0) {
-    const msg = (totalPosts || 0) < 10
-      ? 'Need more posts to determine best times'
-      : 'Day breakdown not available in this dataset';
+    const msg = (totalPosts || 0) < 10 ? 'Need more posts to determine best times' : 'Day breakdown not available in this dataset';
     return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div><div class="ins-empty-sm">${msg}</div></div>`;
   }
-
-  const best    = dayBreakdown[0]; // already sorted desc by avg_reach
-  const maxR    = Math.max(...dayBreakdown.map(d => d.avg_reach));
+  const best      = dayBreakdown[0];
+  const maxR      = Math.max(...dayBreakdown.map(d => d.avg_reach));
   const DOW_ORDER = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-  const bars = [...dayBreakdown]
-    .sort((a, b) => DOW_ORDER.indexOf(a.day) - DOW_ORDER.indexOf(b.day))
-    .map(d => {
-      const pct   = maxR > 0 ? Math.round(d.avg_reach / maxR * 100) : 0;
-      const isTop = d.day === best.day && maxR > 0;
-      return `<div class="day-bar-row">
-        <span class="day-label">${d.day}</span>
-        <div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${pct}%"></div></div>
-        <span class="day-val">${d.avg_reach}</span>
-      </div>`;
-    }).join('');
-
+  const bars = [...dayBreakdown].sort((a, b) => DOW_ORDER.indexOf(a.day) - DOW_ORDER.indexOf(b.day)).map(d => {
+    const pct   = maxR > 0 ? Math.round(d.avg_reach / maxR * 100) : 0;
+    const isTop = d.day === best.day && maxR > 0;
+    return `<div class="day-bar-row"><span class="day-label">${d.day}</span><div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${pct}%"></div></div><span class="day-val">${d.avg_reach}</span></div>`;
+  }).join('');
   const bestLine = maxR > 0
     ? `<div class="ins-best-day-line">Best day: <strong style="color:#22C55E">${best.day}</strong> <span style="color:#6B7280">(avg reach ${best.avg_reach})</span></div>`
-    : `<div class="ins-best-day-line" style="color:#4B5563">All reach values are zero — waiting for data to populate</div>`;
-
-  return `
-    <div class="ins-card">
-      <div class="ins-section-title">Best Posting Times</div>
-      ${bestLine}
-      <div class="ins-note">Hour-of-day not available — Windsor provides daily-level data only</div>
-      ${bars}
-    </div>`;
+    : `<div class="ins-best-day-line" style="color:#4B5563">All reach values are zero — waiting for data</div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div>${bestLine}<div class="ins-note">Hour-of-day not available — Windsor provides daily-level data only</div>${bars}</div>`;
 }
 
 function buildTrend(dailyData, platform) {
   const metric = platform === 'pinterest' ? 'impressions' : 'reach';
   const trend  = computeTrend(dailyData, metric);
-
-  if (!trend) {
-    return `
-      <div class="ins-card">
-        <div class="ins-section-title">Reach Trend</div>
-        <div class="ins-empty-sm">Not enough data yet — need 14+ days of history</div>
-      </div>`;
-  }
-
-  const arrow  = trend.dir === 'up' ? '↑' : trend.dir === 'down' ? '↓' : '→';
-  const color  = trend.dir === 'up' ? '#22C55E' : trend.dir === 'down' ? '#F87171' : '#F59E0B';
-  const change = trend.priorAvg > 0 ? Math.round((trend.lastAvg - trend.priorAvg) / trend.priorAvg * 100) : 0;
+  if (!trend) return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-empty-sm">Not enough data yet — need 14+ days of history</div></div>`;
+  const arrow    = trend.dir === 'up' ? '↑' : trend.dir === 'down' ? '↓' : '→';
+  const color    = trend.dir === 'up' ? '#22C55E' : trend.dir === 'down' ? '#F87171' : '#F59E0B';
+  const change   = trend.priorAvg > 0 ? Math.round((trend.lastAvg - trend.priorAvg) / trend.priorAvg * 100) : 0;
   const dirLabel = trend.dir.charAt(0).toUpperCase() + trend.dir.slice(1);
-
-  return `
-    <div class="ins-card">
-      <div class="ins-section-title">Reach Trend</div>
-      <div class="ins-trend-row">
-        <span class="ins-trend-arrow" style="color:${color}">${arrow}</span>
-        <span class="ins-trend-dir"   style="color:${color}">${dirLabel}</span>
-        <span class="ins-trend-pct"   style="color:${color}">${change > 0 ? '+' : ''}${change}%</span>
-      </div>
-      <div class="ins-trend-detail">
-        Last 7 days avg: <strong>${trend.lastAvg}</strong> &nbsp;vs&nbsp; prior 7 days: <strong>${trend.priorAvg}</strong>
-      </div>
-    </div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-trend-row"><span class="ins-trend-arrow" style="color:${color}">${arrow}</span><span class="ins-trend-dir" style="color:${color}">${dirLabel}</span><span class="ins-trend-pct" style="color:${color}">${change > 0 ? '+' : ''}${change}%</span></div><div class="ins-trend-detail">Last 7 days avg: <strong>${trend.lastAvg}</strong> &nbsp;vs&nbsp; prior 7 days: <strong>${trend.priorAvg}</strong></div></div>`;
 }
 
 function formatLastRefresh(isoString) {
@@ -768,29 +649,28 @@ function formatLastRefresh(isoString) {
   const diffH  = diffMs / 3600000;
   const diffD  = Math.floor(diffMs / 86400000);
   const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  if (diffMs < 60000)   return 'Just now';
-  if (diffH  < 1)       return `${Math.round(diffMs / 60000)}m ago`;
-  if (diffH  < 24)      return `Today at ${timeStr}`;
-  if (diffD  === 1)     return `Yesterday at ${timeStr}`;
-  if (diffD  < 7)       return `${diffD} days ago`;
+  if (diffMs < 60000)  return 'Just now';
+  if (diffH  < 1)      return `${Math.round(diffMs / 60000)}m ago`;
+  if (diffH  < 24)     return `Today at ${timeStr}`;
+  if (diffD  === 1)    return `Yesterday at ${timeStr}`;
+  if (diffD  < 7)      return `${diffD} days ago`;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function updateLastRefreshLabel() {
-  const el = document.getElementById('ins-last-refresh');
+  const el     = document.getElementById('ins-last-refresh');
   if (!el) return;
-  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at]
-    .filter(Boolean).sort().at(-1);
+  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at].filter(Boolean).sort().at(-1);
   el.textContent = newest ? `Last refreshed: ${formatLastRefresh(newest)}` : '';
 }
 
 function computeTrend(dailyData, metric) {
   if (!dailyData || dailyData.length < 4) return null;
-  const sorted   = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
-  const last7    = sorted.slice(-7);
-  const prior7   = sorted.slice(-14, -7);
+  const sorted  = [...dailyData].sort((a, b) => a.date.localeCompare(b.date));
+  const last7   = sorted.slice(-7);
+  const prior7  = sorted.slice(-14, -7);
   if (!prior7.length) return null;
-  const lastAvg  = Math.round(last7.reduce((s, d)  => s + (d[metric] || 0), 0) / last7.length);
+  const lastAvg  = Math.round(last7.reduce( (s, d) => s + (d[metric] || 0), 0) / last7.length);
   const priorAvg = Math.round(prior7.reduce((s, d) => s + (d[metric] || 0), 0) / prior7.length);
   const dir = lastAvg > priorAvg * 1.1 ? 'up' : lastAvg < priorAvg * 0.9 ? 'down' : 'flat';
   return { dir, lastAvg, priorAvg };
@@ -800,10 +680,8 @@ function computeTrend(dailyData, metric) {
 
 async function loadHealth() {
   try {
-    const res = await fetch(API + '/health');
+    const res  = await fetch(API + '/health');
     const data = await res.json();
-    canvaConnected = !!data.canva_connected;
-    updateCanvaStatus();
     if (!data.windsor_key_set) {
       renderInsightsPanelError('Add WINDSOR_API_KEY to .env to enable');
     }
@@ -815,53 +693,11 @@ async function loadHealth() {
   } catch (e) {}
 }
 
-function updateCanvaStatus() {
-  const banner = document.getElementById('canva-status');
-  const label = document.getElementById('canva-status-label');
-  const info = document.getElementById('canva-template-info');
-  const connectBtn = document.getElementById('btn-connect-canva');
-  const disconnectBtn = document.getElementById('btn-disconnect-canva');
-
-  if (canvaConnected) {
-    banner.className = 'canva-status connected';
-    label.textContent = 'Connected';
-    connectBtn.style.display = 'none';
-    disconnectBtn.style.display = 'inline-block';
-  } else {
-    banner.className = 'canva-status disconnected';
-    label.textContent = 'Not connected';
-    connectBtn.style.display = 'inline-block';
-    disconnectBtn.style.display = 'none';
-  }
-  info.textContent = brandTemplateId ? `Template ID: ${brandTemplateId}` : 'No template ID set yet — click "Set template"';
-}
-
-function connectCanva() { window.location.href = '/oauth/canva/start'; }
-
-async function disconnectCanva() {
-  if (!confirm('Disconnect Canva?')) return;
-  await fetch(API + '/canva/disconnect', { method: 'POST' });
-  canvaConnected = false;
-  updateCanvaStatus();
-}
-
-function openTemplateModal() {
-  document.getElementById('template-id-input').value = brandTemplateId;
-  document.getElementById('template-modal').classList.add('active');
-}
-function closeTemplateModal() { document.getElementById('template-modal').classList.remove('active'); }
-function saveTemplateId() {
-  brandTemplateId = document.getElementById('template-id-input').value.trim();
-  localStorage.setItem('npm_brand_template_id', brandTemplateId);
-  updateCanvaStatus();
-  closeTemplateModal();
-}
-
 async function loadIdeas() {
   try {
-    const res = await fetch(API + '/ideas');
+    const res  = await fetch(API + '/ideas');
     const data = await res.json();
-    allIdeas = data.ideas || [];
+    allIdeas   = data.ideas || [];
     updateCounts();
   } catch (e) {
     setStatus('Backend not reachable. Is the server running?', 'error');
@@ -870,7 +706,7 @@ async function loadIdeas() {
 
 async function generateIdeas() {
   const btn = document.getElementById('gen-btn');
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = 'Generating...';
   setStatus('Calling Claude...');
   document.getElementById('ideas-list').innerHTML = '';
@@ -899,7 +735,7 @@ async function generateIdeas() {
     setStatus('Error: ' + e.message, 'error');
   }
 
-  btn.disabled = false;
+  btn.disabled    = false;
   btn.textContent = 'Generate ideas';
 }
 
@@ -913,36 +749,31 @@ function makeCard(idea) {
   const div = document.createElement('div');
   let cls = 'idea-card';
   if (idea.status === 'approved') cls += ' approved';
-  if (idea.status === 'skipped') cls += ' skipped';
-  if (idea.canva_design_id) cls += ' designed';
+  if (idea.status === 'skipped')  cls += ' skipped';
   div.className = cls;
-  div.id = 'card-' + idea.id;
+  div.id        = 'card-' + idea.id;
 
-  const pClass = { Pinterest: 'badge-pinterest', Reel: 'badge-reel', Both: 'badge-both' }[idea.platform] || 'badge-pinterest';
-  const typeLabel = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle' }[idea.content_type] || idea.content_type;
+  const pClass      = { Pinterest: 'badge-pinterest', Reel: 'badge-reel', Both: 'badge-both' }[idea.platform] || 'badge-pinterest';
+  const typeLabel   = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle', seasonal: 'seasonal 🌿' }[idea.content_type] || (idea.content_type || '');
+  const typeBadge   = idea.content_type === 'seasonal' ? 'badge badge-seasonal' : 'badge badge-type';
   const approveClass = idea.status === 'approved' ? 'btn-approve approved' : 'btn-approve';
   const approveLabel = idea.status === 'approved' ? 'approved ✓' : 'approve';
-  const designedBadge = idea.canva_design_id ? '<span class="badge badge-designed">designed</span>' : '';
-  const designLink = idea.canva_design_url ? `<a class="design-link" href="${idea.canva_design_url}" target="_blank">→ open in Canva</a>` : '';
 
   div.innerHTML = `
     <div class="idea-meta">
       <span class="badge ${pClass}">${idea.platform}</span>
-      <span class="badge badge-type">${typeLabel}</span>
-      ${designedBadge}
+      <span class="${typeBadge}">${typeLabel}</span>
     </div>
     <div class="idea-topic">${escapeHtml(idea.topic)}</div>
     <div class="idea-hook">${escapeHtml(idea.hook)}</div>
-    ${idea.title ? `<div class="idea-title">${escapeHtml(idea.title)}</div>` : ''}
+    ${idea.title       ? `<div class="idea-title">${escapeHtml(idea.title)}</div>` : ''}
     <div class="idea-description">${escapeHtml(idea.description)}</div>
     <div class="idea-visual"><strong>Canva brief:</strong> ${escapeHtml(idea.visual_brief)}</div>
     <div class="idea-actions">
       <button class="${approveClass}" onclick="toggleApprove(${idea.id})">${approveLabel}</button>
-      <button class="btn-design" onclick="createDesign(${idea.id})">${idea.canva_design_id ? 're-create design' : 'create design'}</button>
       <button class="btn-sm" onclick="regenerate(${idea.id})">regenerate</button>
       <button class="btn-sm" onclick="toggleEdit(${idea.id})">edit</button>
       <button class="btn-sm" onclick="skipIdea(${idea.id})">skip</button>
-      ${designLink}
     </div>
     <div id="edit-${idea.id}" style="display:none;" class="edit-box">
       <label>Hook</label><input type="text" id="hook-${idea.id}" value="${escapeAttr(idea.hook)}" />
@@ -954,39 +785,11 @@ function makeCard(idea) {
   return div;
 }
 
-function escapeHtml(s) { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-function escapeAttr(s) { return escapeHtml(s).replace(/'/g, '&#39;'); }
-
-async function createDesign(id) {
-  if (!canvaConnected) { setStatus('Connect Canva first.', 'error'); return; }
-  if (!brandTemplateId) { setStatus('Set a Brand Template ID first.', 'error'); return; }
-
-  const idea = allIdeas.find(i => i.id === id);
-  if (!idea) return;
-
-  setStatus(`Creating Canva design for: ${idea.topic}...`);
-
-  try {
-    const res = await fetch(API + '/canva/autofill', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ brand_template_id: brandTemplateId, idea_id: id })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(JSON.stringify(data.error));
-
-    const refreshed = await fetch(API + '/ideas').then(r => r.json());
-    allIdeas = refreshed.ideas;
-    refreshCard(allIdeas.find(i => i.id === id));
-    updateCounts();
-    setStatus('Design created. Job status: ' + (data.data?.job?.status || 'submitted'), 'ok');
-  } catch (e) {
-    setStatus('Design error: ' + e.message, 'error');
-  }
-}
+function escapeHtml(s)  { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function escapeAttr(s)  { return escapeHtml(s).replace(/'/g, '&#39;'); }
 
 async function toggleApprove(id) {
-  const idea = allIdeas.find(i => i.id === id);
+  const idea      = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'approved' ? 'pending' : 'approved';
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
@@ -996,7 +799,7 @@ async function toggleApprove(id) {
 }
 
 async function skipIdea(id) {
-  const idea = allIdeas.find(i => i.id === id);
+  const idea      = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'skipped' ? 'pending' : 'skipped';
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
@@ -1009,7 +812,7 @@ async function regenerate(id) {
   const card = document.getElementById('card-' + id);
   if (card) card.style.opacity = '0.5';
   try {
-    const res = await fetch(`${API}/ideas/${id}/regenerate`, { method: 'POST' });
+    const res  = await fetch(`${API}/ideas/${id}/regenerate`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
       const idx = allIdeas.findIndex(i => i.id === id);
@@ -1034,8 +837,8 @@ function toggleEdit(id) {
 async function saveEdit(id) {
   const idea = allIdeas.find(i => i.id === id);
   if (!idea) return;
-  idea.hook = document.getElementById('hook-' + id).value;
-  idea.title = document.getElementById('title-' + id).value;
+  idea.hook        = document.getElementById('hook-'        + id).value;
+  idea.title       = document.getElementById('title-'       + id).value;
   idea.description = document.getElementById('description-' + id).value;
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hook: idea.hook, title: idea.title, description: idea.description }) });
   refreshCard(idea);
@@ -1044,13 +847,13 @@ async function saveEdit(id) {
 function updateCounts() {
   const total    = allIdeas.length;
   const approved = allIdeas.filter(i => i.status === 'approved').length;
-  const designed = allIdeas.filter(i => i.canva_design_id).length;
+  const skipped  = allIdeas.filter(i => i.status === 'skipped').length;
   const pending  = allIdeas.filter(i => i.status === 'pending').length;
-  document.getElementById('queue-count').textContent = total ? `(${total})` : '';
-  document.getElementById('s-total').textContent    = total;
-  document.getElementById('s-approved').textContent = approved;
-  document.getElementById('s-designed').textContent = designed;
-  document.getElementById('s-pending').textContent  = pending;
+  document.getElementById('queue-count').textContent  = total   ? `(${total})` : '';
+  document.getElementById('s-total').textContent      = total;
+  document.getElementById('s-approved').textContent   = approved;
+  document.getElementById('s-skipped').textContent    = skipped;
+  document.getElementById('s-pending').textContent    = pending;
 }
 
 function renderQueue() {
@@ -1066,15 +869,69 @@ function renderQueue() {
   updateCounts();
 }
 
+// ── Canva MCP prompt export ───────────────────────────────────────
+function copyCanvaPrompt() {
+  const approved = allIdeas.filter(i => i.status === 'approved');
+  if (!approved.length) {
+    setStatus('No approved ideas yet — approve some ideas first.', 'error');
+    return;
+  }
+
+  const monthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const n         = approved.length;
+
+  const ideaList = approved.map((idea, i) =>
+    `${i + 1}. Hook: ${idea.hook}\n   Title: ${idea.title}\n   Description: ${idea.description}`
+  ).join('\n\n');
+
+  const prompt =
+`Please create ${n} Pinterest pin${n === 1 ? '' : 's'} for Net Positive Method using Canva.
+
+It is currently ${monthYear}.
+
+Style for every pin: clean minimal editorial, white or light background, bold black sans-serif typography, single thin green accent (#22C55E), no illustrations or stock photos, portrait format (1000x1500px), small 'netpositivemethod.com' in green at the bottom.
+
+Create each pin one at a time. Show me the design before moving to the next so I can approve or request changes.
+
+Here are the ${n} approved idea${n === 1 ? '' : 's'}:
+
+${ideaList}`;
+
+  // Show preview
+  const wrap    = document.getElementById('canva-prompt-wrap');
+  const preview = document.getElementById('canva-prompt-preview');
+  const confirm = document.getElementById('canva-copy-confirm');
+  preview.value        = prompt;
+  wrap.style.display   = 'block';
+
+  // Copy to clipboard
+  const doCopy = () => {
+    confirm.style.display = 'inline';
+    setTimeout(() => { confirm.style.display = 'none'; }, 2500);
+  };
+
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(prompt).then(doCopy).catch(() => {
+      preview.select();
+      document.execCommand('copy');
+      doCopy();
+    });
+  } else {
+    preview.select();
+    document.execCommand('copy');
+    doCopy();
+  }
+}
+
 function exportCSV() {
   const approved = allIdeas.filter(i => i.status === 'approved');
   if (!approved.length) { alert('No approved ideas to export.'); return; }
-  const headers = ['topic', 'hook', 'title', 'description', 'visual_brief', 'platform', 'content_type', 'status', 'canva_design_url'];
-  const rows = approved.map(i => headers.map(k => `"${String(i[k] || '').replace(/"/g, '""')}"`).join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'content_queue_' + new Date().toISOString().slice(0, 10) + '.csv';
+  const headers = ['topic', 'hook', 'title', 'description', 'visual_brief', 'platform', 'content_type', 'status'];
+  const rows    = approved.map(i => headers.map(k => `"${String(i[k] || '').replace(/"/g, '""')}"`).join(','));
+  const csv     = [headers.join(','), ...rows].join('\n');
+  const a       = document.createElement('a');
+  a.href        = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download    = 'content_queue_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
 }
 
@@ -1083,6 +940,7 @@ async function clearQueue() {
   await fetch(API + '/ideas', { method: 'DELETE' });
   allIdeas = [];
   document.getElementById('ideas-list').innerHTML = '';
+  document.getElementById('canva-prompt-wrap').style.display = 'none';
   renderQueue();
   updateCounts();
 }
