@@ -11,6 +11,9 @@ node_modules/
 # Data (don't commit your ideas.json — it'll be different on each PC)
 ideas.json
 
+# Generated pin images
+designs/
+
 # OS junk
 .DS_Store
 Thumbs.db
