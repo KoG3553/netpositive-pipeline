@@ -16,7 +16,11 @@ const CLAUDE_MODEL = 'claude-sonnet-4-5';
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// Serve ONLY the dashboard. Previously `express.static(__dirname)` exposed the
+// entire project directory over HTTP (server.js source, ideas.json, package.json).
+// The frontend needs only index.html + the /api/* routes, so serve just that.
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const DATA_FILE                       = path.join(__dirname, 'ideas.json');
 const WINDSOR_INSIGHTS_FILE           = path.join(__dirname, '.windsor-insights.json');
