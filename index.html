@@ -3,323 +3,542 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Net Positive Method — Content Pipeline</title>
+<title>NPM Pipeline — Net Positive Method</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0B0F14; color: #E5E7EB; min-height: 100vh; padding: 2rem 1rem; }
-  .container { max-width: 860px; margin: 0 auto; }
-  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-  .brand-line { width: 3px; height: 28px; background: #22C55E; border-radius: 2px; }
-  h1 { font-size: 22px; font-weight: 600; color: #F9FAFB; }
-  .subtitle { font-size: 13px; color: #9CA3AF; margin-bottom: 1.5rem; padding-left: 13px; }
-  /* Windsor panel */
-  .windsor-panel { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 18px; margin-bottom: 1.25rem; }
-  .windsor-panel.active   { border-left: 3px solid #8B3DFF; }
-  .windsor-panel.inactive { border-left: 3px solid #374151; }
-  .windsor-panel.no-key   { border-left: 3px solid #F59E0B; }
-  .windsor-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .windsor-info { flex: 1; min-width: 0; }
-  .windsor-title { font-size: 13px; color: #E5E7EB; }
-  .windsor-title strong { color: #F9FAFB; }
-  .windsor-meta { font-size: 12px; color: #9CA3AF; margin-top: 3px; }
-  .windsor-stats { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
-  .windsor-stat .val { color: #C4B5FD; font-weight: 600; font-size: 13px; }
-  .windsor-stat .lbl { color: #6B7280; font-size: 12px; }
-  .windsor-actions { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
-  .btn-windsor-refresh { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; background: transparent; color: #9CA3AF; border: 1px solid #374151; }
-  .btn-windsor-refresh:hover { border-color: #8B3DFF; color: #C4B5FD; }
-  .btn-windsor-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
-  .windsor-toggle-wrap { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280; cursor: pointer; padding: 7px 0; }
-  .windsor-toggle-wrap input { accent-color: #8B3DFF; cursor: pointer; width: 14px; height: 14px; }
-  .windsor-toggle-wrap:hover { color: #9CA3AF; }
-  .windsor-expand-btn { background: none; border: none; color: #6B7280; font-size: 12px; cursor: pointer; padding: 6px 0 0; display: inline-flex; align-items: center; gap: 4px; }
-  .windsor-expand-btn:hover { color: #9CA3AF; }
-  .windsor-details { display: none; margin-top: 12px; border-top: 1px solid #1F2937; padding-top: 12px; }
-  .windsor-details.open { display: block; }
-  .windsor-platforms { display: flex; gap: 20px; margin-bottom: 10px; flex-wrap: wrap; }
-  .windsor-platform-badge { font-size: 12px; }
-  .windsor-platform-badge .platform-name { font-weight: 600; color: #E5E7EB; }
-  .windsor-platform-badge .platform-stat { color: #6B7280; }
-  .windsor-top-posts { margin-top: 8px; }
-  .windsor-top-posts h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 6px; font-weight: 500; }
-  .top-post-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; font-size: 12px; }
-  .top-post-rank { color: #4B5563; min-width: 14px; }
-  .top-post-metric { color: #C4B5FD; font-weight: 600; min-width: 70px; }
-  .top-post-link { color: #6B7280; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px; display: inline-block; }
-  .top-post-link:hover { color: #9CA3AF; text-decoration: underline; }
-  .top-post-title { color: #9CA3AF; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
-  .windsor-date-range { font-size: 11px; color: #4B5563; margin-top: 8px; }
-  /* Insights banner */
-  .insights-banner { background: #130f23; border: 1px solid #2d1f4e; border-radius: 8px; padding: 10px 14px; margin-bottom: 1rem; font-size: 12px; color: #C4B5FD; display: none; }
-  .insights-banner.visible { display: block; }
-  .insights-banner strong { color: #DDD6FE; }
-  .insights-banner.disabled { background: #111827; border-color: #1F2937; color: #4B5563; }
-  /* Tabs */
-  .tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid #1F2937; }
-  .tab { font-size: 13px; padding: 10px 18px; border: none; background: none; cursor: pointer; color: #9CA3AF; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; }
-  .tab.active { color: #F9FAFB; border-bottom: 2px solid #22C55E; }
-  .tab:hover:not(.active) { color: #E5E7EB; }
-  .section { display: none; }
-  .section.active { display: block; }
-  /* Controls */
-  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
-  label { display: block; font-size: 12px; color: #9CA3AF; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-  select, input[type="text"], input[type="password"], textarea {
-    width: 100%; padding: 9px 12px; border: 1px solid #374151; border-radius: 8px;
-    font-size: 13px; background: #111827; color: #E5E7EB; outline: none; font-family: inherit;
+  :root {
+    --bg:        #0A0A0A;
+    --surface1:  #111111;
+    --surface2:  #1A1A1A;
+    --border:    #2A2A2A;
+    --border-br: #3A3A3A;
+    --text:      #FFFFFF;
+    --text-sec:  #888888;
+    --text-mut:  #555555;
+    --green:     #22C55E;
+    --green-dim: #16A34A;
+    --amber:     #F59E0B;
+    --red:       #EF4444;
   }
-  select:focus, input:focus, textarea:focus { border-color: #22C55E; }
-  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-  .btn-primary { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; background: #22C55E; color: #0B0F14; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 1rem; }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-  .status { font-size: 12px; color: #9CA3AF; margin-bottom: 1rem; min-height: 18px; }
-  .status.error { color: #F87171; }
-  .status.ok { color: #22C55E; }
-  /* Idea cards */
-  .idea-card { background: #111827; border: 1px solid #1F2937; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 12px; }
-  .idea-card.approved { border-color: #22C55E; border-left: 3px solid #22C55E; }
-  .idea-card.skipped  { opacity: 0.35; }
-  .idea-meta { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
-  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-  .badge-pinterest { background: #7F1D1D; color: #FCA5A5; }
-  .badge-reel      { background: #1E3A8A; color: #93C5FD; }
-  .badge-both      { background: #14532D; color: #86EFAC; }
-  .badge-type      { background: #1F2937; color: #9CA3AF; }
-  .badge-seasonal  { background: #1a2e1a; color: #86EFAC; }
-  .idea-topic { font-size: 14px; font-weight: 600; color: #F9FAFB; margin-bottom: 8px; }
-  .idea-hook  { font-size: 16px; color: #F9FAFB; border-left: 3px solid #22C55E; padding-left: 12px; margin-bottom: 12px; line-height: 1.4; font-weight: 500; }
-  .idea-title { font-size: 13px; color: #D1D5DB; font-weight: 600; margin-bottom: 6px; }
-  .idea-description { font-size: 13px; color: #9CA3AF; line-height: 1.6; margin-bottom: 10px; }
-  .idea-visual { font-size: 12px; color: #9CA3AF; background: #0B0F14; border: 1px solid #1F2937; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
-  .idea-visual strong { color: #22C55E; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--border); }
+  ::-webkit-scrollbar-thumb { background: var(--border-br); border-radius: 6px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: #4a4a4a; }
+  * { scrollbar-width: thin; scrollbar-color: var(--border-br) var(--bg); }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  .app { display: flex; min-height: 100vh; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+    background: var(--surface1); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 18px 0; z-index: 10;
+  }
+  .main { margin-left: 220px; flex: 1; min-width: 0; padding: 32px 40px; max-width: 1180px; }
+
+  /* ── Sidebar brand ──────────────────────────────────────── */
+  .sb-brand { padding: 0 18px 18px; display: flex; align-items: center; gap: 9px; }
+  .sb-logo { width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, var(--green), var(--green-dim)); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .sb-brand-text { min-width: 0; }
+  .sb-name { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; line-height: 1.2; }
+  .sb-sub { font-size: 11px; color: var(--text-mut); margin-top: 1px; }
+  .health-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mut); flex-shrink: 0; transition: background .15s ease; }
+  .health-dot.ok { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,.6); }
+
+  /* ── Sidebar nav ────────────────────────────────────────── */
+  .sb-nav { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; color: var(--text-sec); cursor: pointer;
+    border: none; background: none; width: 100%; text-align: left; position: relative;
+    border-left: 2px solid transparent; transition: background .15s ease, color .15s ease;
+  }
+  .nav-item:hover:not(.active):not(.disabled) { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--text); background: var(--surface2); border-left-color: var(--green); }
+  .nav-item.disabled { color: var(--text-mut); cursor: not-allowed; opacity: .55; }
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; font-size: 11px; font-weight: 600; background: var(--surface2); color: var(--text-sec); padding: 1px 7px; border-radius: 10px; border: 1px solid var(--border); }
+  .nav-item.active .nav-badge { background: rgba(34,197,94,.14); color: var(--green); border-color: transparent; }
+  .nav-soon { margin-left: auto; font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-mut); }
+
+  /* ── Sidebar footer ─────────────────────────────────────── */
+  .sb-footer { padding: 14px 16px 4px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+  .conn-row { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--text-sec); }
+  .conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mut); flex-shrink: 0; transition: background .15s ease; }
+  .conn-dot.on { background: var(--green); box-shadow: 0 0 5px rgba(34,197,94,.5); }
+  .conn-dot.warn { background: var(--amber); }
+  .conn-label { flex: 1; }
+  .conn-state { font-size: 11px; color: var(--text-mut); }
+  .icon-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-sec); width: 24px; height: 24px;
+    border-radius: 5px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .15s ease; padding: 0;
+  }
+  .icon-btn:hover:not(:disabled) { border-color: var(--green); color: var(--green); }
+  .icon-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .icon-btn.spin { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Page headers ───────────────────────────────────────── */
+  .view { display: none; animation: fade .2s ease; }
+  .view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .page-title { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .page-sub { font-size: 13px; color: var(--text-sec); margin-top: 4px; }
+
+  /* ── Buttons ────────────────────────────────────────────── */
+  .btn { font-family: inherit; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: all .15s ease; white-space: nowrap; }
+  .btn:hover:not(:disabled) { border-color: var(--border-br); background: #222; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-sm  { height: 32px; padding: 0 13px; font-size: 12px; }
+  .btn-md  { height: 36px; padding: 0 16px; font-size: 13px; }
+  .btn-lg  { height: 40px; padding: 0 20px; font-size: 14px; }
+  .btn-green { background: var(--green); border-color: var(--green); color: #06210F; }
+  .btn-green:hover:not(:disabled) { background: var(--green-dim); border-color: var(--green-dim); color: #fff; }
+  .btn-ghost { background: transparent; }
+  .btn-block { width: 100%; }
+
+  /* ── Cards & grids ──────────────────────────────────────── */
+  .card { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; transition: border-color .15s ease; }
+  .card-pad { padding: 18px; }
+  .stat-grid { display: grid; gap: 14px; margin-bottom: 22px; }
+  .stat-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .stat-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat-card { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; transition: border-color .15s ease; }
+  .stat-card:hover { border-color: var(--border-br); }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-sec); font-weight: 500; }
+  .stat-card .value { font-size: 30px; font-weight: 600; letter-spacing: -.02em; margin-top: 8px; line-height: 1; }
+  .stat-card .value.sm { font-size: 22px; }
+  .stat-card .meta { font-size: 12px; color: var(--text-mut); margin-top: 7px; }
+  .stat-card .meta .pos { color: var(--green); }
+
+  .two-col { display: grid; grid-template-columns: 6fr 4fr; gap: 18px; align-items: start; }
+  .col-stack { display: flex; flex-direction: column; gap: 18px; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
+  .panel-head .sub { font-size: 11px; color: var(--text-mut); }
+
+  /* ── Form controls ──────────────────────────────────────── */
+  .field { margin-bottom: 16px; }
+  label.lbl { display: block; font-size: 11px; color: var(--text-sec); margin-bottom: 7px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+  select, input[type="text"], input[type="password"], textarea {
+    width: 100%; padding: 0 12px; height: 36px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; background: var(--bg); color: var(--text); outline: none; font-family: inherit; transition: border-color .15s ease;
+  }
+  textarea { height: auto; min-height: 78px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+  select:focus, input:focus, textarea:focus { border-color: var(--border-br); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ── Badges ─────────────────────────────────────────────── */
+  .badge { font-size: 11px; padding: 2px 9px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+  .badge-pinterest { background: rgba(239,68,68,.12); color: #FCA5A5; }
+  .badge-reel      { background: rgba(59,130,246,.14); color: #93C5FD; }
+  .badge-both      { background: rgba(34,197,94,.14); color: #86EFAC; }
+  .badge-type      { background: var(--surface2); color: var(--text-sec); border: 1px solid var(--border); }
+  .badge-seasonal  { background: rgba(34,197,94,.12); color: var(--green); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-sec); background: var(--surface1); }
+  .pill.active { color: var(--green); border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.07); }
+  .pill.off { color: var(--text-mut); }
+
+  /* tooltip */
+  .tip { position: relative; cursor: help; }
+  .tip .tip-body { visibility: hidden; opacity: 0; position: absolute; bottom: calc(100% + 8px); left: 0; width: 250px; background: var(--surface2); border: 1px solid var(--border-br); border-radius: 6px; padding: 9px 11px; font-size: 11px; line-height: 1.5; color: var(--text-sec); z-index: 20; transition: opacity .15s ease; box-shadow: 0 8px 24px rgba(0,0,0,.5); font-weight: 400; }
+  .tip:hover .tip-body { visibility: visible; opacity: 1; }
+
+  /* ── Idea cards ─────────────────────────────────────────── */
+  .idea-card { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 12px; border-left: 3px solid transparent; transition: border-color .15s ease, opacity .15s ease; }
+  .idea-card:hover { border-color: var(--border-br); }
+  .idea-card.approved { border-left-color: var(--green); }
+  .idea-card.skipped  { opacity: .4; }
+  .idea-meta { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .idea-hook  { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 6px; letter-spacing: -.01em; }
+  .idea-title { font-size: 13px; color: var(--text-sec); font-weight: 500; margin-bottom: 8px; }
+  .idea-desc  { font-size: 13px; color: var(--text-mut); line-height: 1.6; margin-bottom: 10px; }
+  .idea-desc.clamp { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+  .idea-brief-toggle { font-size: 12px; color: var(--text-sec); background: none; border: none; cursor: pointer; padding: 0 0 10px; display: inline-flex; align-items: center; gap: 5px; font-family: inherit; }
+  .idea-brief-toggle:hover { color: var(--text); }
+  .idea-brief { display: none; font-size: 12px; color: var(--text-sec); background: var(--bg); border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; line-height: 1.55; }
+  .idea-brief.open { display: block; }
+  .idea-brief strong { color: var(--green); }
   .idea-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn-approve { font-size: 12px; padding: 6px 16px; background: transparent; color: #22C55E; border: 1px solid #22C55E; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  .btn-approve.approved { background: #22C55E; color: #0B0F14; }
-  .btn-sm { font-size: 12px; padding: 6px 14px; background: transparent; color: #9CA3AF; border: 1px solid #374151; border-radius: 6px; cursor: pointer; }
-  .btn-sm:hover { border-color: #6B7280; color: #E5E7EB; }
-  .edit-box { background: #0B0F14; border: 1px solid #1F2937; border-radius: 8px; padding: 1rem; margin-top: 10px; }
-  .edit-box label { margin-bottom: 4px; }
-  .edit-box textarea, .edit-box input { margin-bottom: 10px; min-height: 50px; }
-  .btn-save { font-size: 12px; padding: 6px 14px; background: #22C55E; color: #0B0F14; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  /* Queue */
-  .queue-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
-  .stat { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 16px; text-align: center; }
-  .stat-num   { font-size: 26px; font-weight: 600; color: #F9FAFB; }
-  .stat-label { font-size: 11px; color: #9CA3AF; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .queue-actions { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
-  .btn-canva-mcp { background: #22C55E; color: #0B0F14; border-color: #22C55E; font-weight: 700; }
-  .btn-canva-mcp:hover { background: #16A34A; border-color: #16A34A; color: #fff; }
-  .canva-prompt-wrap { display: none; background: #111827; border: 1px solid #22C55E; border-radius: 10px; padding: 16px; margin-bottom: 1.25rem; }
-  .canva-prompt-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .canva-prompt-label span { color: #22C55E; font-size: 12px; font-weight: 600; display: none; }
-  .canva-prompt-preview { width: 100%; min-height: 260px; background: #0B0F14; border: 1px solid #374151; border-radius: 6px; color: #9CA3AF; font-size: 12px; font-family: 'Courier New', monospace; padding: 12px; resize: vertical; line-height: 1.6; }
-  .empty { text-align: center; padding: 3rem; color: #6B7280; font-size: 14px; }
-  /* Insights tab */
-  .ins-tab-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 12px; flex-wrap: wrap; }
-  .ins-tab-title { font-size: 16px; font-weight: 600; color: #F9FAFB; }
-  .ins-tab-sub { font-size: 12px; color: #6B7280; margin-top: 3px; }
-  .ins-last-refresh { font-size: 11px; color: #4B5563; margin-top: 5px; }
-  .btn-ins-refresh { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; background: transparent; color: #9CA3AF; border: 1px solid #374151; }
-  .btn-ins-refresh:hover { border-color: #22C55E; color: #22C55E; }
-  .btn-ins-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
-  .ins-loading { display: flex; align-items: center; justify-content: center; padding: 4rem; color: #6B7280; font-size: 14px; gap: 10px; }
-  .ins-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-  .ins-col { display: flex; flex-direction: column; gap: 10px; }
-  .ins-platform-label { font-size: 13px; font-weight: 600; color: #F9FAFB; margin-bottom: 2px; padding-bottom: 8px; border-bottom: 1px solid #1F2937; }
-  .ins-card { background: #111827; border: 1px solid #1F2937; border-radius: 10px; padding: 14px 16px; }
-  .ins-header-card { border-left: 3px solid #22C55E; }
-  .ins-card-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .btn-approve { font-size: 12px; height: 30px; padding: 0 15px; background: transparent; color: var(--green); border: 1px solid rgba(34,197,94,.4); border-radius: 6px; cursor: pointer; font-weight: 600; font-family: inherit; transition: all .15s ease; }
+  .btn-approve:hover { background: rgba(34,197,94,.1); }
+  .btn-approve.approved { background: var(--green); color: #06210F; border-color: var(--green); }
+  .edit-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 12px; }
+  .edit-box .lbl { margin-bottom: 5px; }
+  .edit-box textarea, .edit-box input { margin-bottom: 12px; }
+
+  /* ── Mini idea row (overview) ───────────────────────────── */
+  .mini-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .mini-row:last-child { border-bottom: none; }
+  .mini-hook { flex: 1; min-width: 0; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mini-badge { flex-shrink: 0; }
+
+  /* ── Perf rows (overview top pins + insights) ───────────── */
+  .perf-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .perf-row:last-child { border-bottom: none; }
+  .perf-rank { color: var(--text-mut); font-weight: 600; font-size: 12px; width: 16px; flex-shrink: 0; }
+  .perf-title { flex: 1; color: var(--text-sec); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .perf-metric { color: var(--text); font-weight: 600; font-size: 12px; min-width: 56px; text-align: right; flex-shrink: 0; }
+  .perf-sub { color: var(--text-mut); font-size: 11px; min-width: 56px; text-align: right; flex-shrink: 0; }
+  .perf-open { color: var(--text-mut); text-decoration: none; font-size: 13px; flex-shrink: 0; transition: color .15s ease; }
+  .perf-open:hover { color: var(--green); }
+
+  /* ── Filter tabs (queue) ────────────────────────────────── */
+  .filter-tabs { display: flex; gap: 4px; margin-bottom: 18px; background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 4px; width: fit-content; }
+  .filter-tab { font-size: 12px; font-weight: 500; padding: 7px 16px; border-radius: 5px; border: none; background: none; color: var(--text-sec); cursor: pointer; font-family: inherit; transition: all .15s ease; }
+  .filter-tab:hover:not(.active) { color: var(--text); }
+  .filter-tab.active { background: var(--surface2); color: var(--text); }
+
+  /* ── Status / errors ────────────────────────────────────── */
+  .status-msg { font-size: 12px; min-height: 18px; margin-top: 12px; }
+  .err-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(239,68,68,.1); color: #FCA5A5; border: 1px solid rgba(239,68,68,.25); font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 20px; }
+  .ok-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(34,197,94,.1); color: #86EFAC; border: 1px solid rgba(34,197,94,.25); font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 20px; }
+
+  /* ── Export CTA (queue) ─────────────────────────────────── */
+  .export-cta { margin-bottom: 18px; }
+  .export-sub { font-size: 12px; color: var(--text-mut); text-align: center; margin-top: 8px; }
+  .canva-prompt-wrap { display: none; background: var(--surface1); border: 1px solid rgba(34,197,94,.35); border-radius: 8px; padding: 16px; margin-bottom: 18px; }
+  .canva-prompt-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-sec); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .canva-prompt-label span { color: var(--green); font-size: 12px; font-weight: 600; display: none; }
+  .canva-prompt-preview { width: 100%; min-height: 240px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text-sec); font-size: 12px; font-family: 'SFMono-Regular', Consolas, monospace; padding: 12px; resize: vertical; line-height: 1.6; }
+
+  /* ── Empty states & skeletons ───────────────────────────── */
+  .empty { text-align: center; padding: 48px 24px; color: var(--text-mut); }
+  .empty .emoji { font-size: 30px; margin-bottom: 12px; opacity: .7; }
+  .empty .title { font-size: 14px; color: var(--text-sec); margin-bottom: 6px; }
+  .empty .hint { font-size: 12px; color: var(--text-mut); max-width: 360px; margin: 0 auto; line-height: 1.5; }
+  .empty .hint a { color: var(--green); text-decoration: none; }
+  .empty .hint a:hover { text-decoration: underline; }
+  .skel { background: linear-gradient(90deg, var(--surface1) 25%, var(--surface2) 50%, var(--surface1) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .skel-line { height: 12px; margin-bottom: 10px; }
+  .skel-card { height: 90px; margin-bottom: 14px; }
+
+  /* ── Insights page ──────────────────────────────────────── */
+  .ins-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .ins-col { display: flex; flex-direction: column; gap: 12px; }
+  .ins-platform-label { font-size: 14px; font-weight: 600; color: var(--text); padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .ins-card { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .ins-header-card { border-left: 3px solid var(--green); }
+  .ins-card-stats { display: flex; gap: 12px; flex-wrap: wrap; }
   .ins-stat { flex: 1; min-width: 64px; }
-  .ins-stat-val { font-size: 19px; font-weight: 600; color: #F9FAFB; line-height: 1.2; }
-  .ins-stat-lbl { font-size: 10px; color: #6B7280; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
-  .ins-date-range { font-size: 11px; color: #4B5563; margin-top: 4px; }
-  .ins-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; font-weight: 600; margin-bottom: 10px; }
-  .ins-empty { text-align: center; padding: 2.5rem 1rem; color: #9CA3AF; font-size: 13px; }
-  .ins-empty a { color: #C4B5FD; text-decoration: none; }
-  .ins-empty a:hover { text-decoration: underline; }
-  .ins-empty-sm { font-size: 12px; color: #4B5563; font-style: italic; padding: 4px 0; }
-  .perf-table { display: flex; flex-direction: column; gap: 1px; }
-  .perf-row { display: flex; align-items: center; gap: 6px; padding: 6px 6px; border-radius: 5px; font-size: 12px; }
-  .perf-row-alt { background: #0B0F14; }
-  .perf-rank   { color: #4B5563; min-width: 16px; font-weight: 600; font-size: 11px; }
-  .perf-title  { flex: 1; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-  .perf-metric { color: #C4B5FD; font-weight: 600; min-width: 54px; text-align: right; font-size: 11px; flex-shrink: 0; }
-  .perf-reach  { color: #6B7280; min-width: 50px; text-align: right; font-size: 11px; flex-shrink: 0; }
-  .ins-open-link { color: #4B5563; text-decoration: none; font-size: 12px; padding-left: 2px; flex-shrink: 0; }
-  .ins-open-link:hover { color: #C4B5FD; }
-  .day-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .day-label { color: #9CA3AF; min-width: 28px; font-size: 11px; }
-  .day-bar-track { flex: 1; background: #1F2937; border-radius: 3px; height: 6px; overflow: hidden; }
-  .day-bar-fill { height: 100%; background: #374151; border-radius: 3px; }
-  .day-bar-fill.top { background: #22C55E; }
-  .day-val { color: #6B7280; min-width: 28px; text-align: right; font-size: 11px; }
-  .ins-best-day-line { font-size: 12px; color: #E5E7EB; margin-bottom: 6px; }
-  .ins-note { font-size: 11px; color: #374151; margin-bottom: 8px; font-style: italic; }
-  .ins-trend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .ins-stat-val { font-size: 20px; font-weight: 600; line-height: 1.2; letter-spacing: -.01em; }
+  .ins-stat-lbl { font-size: 10px; color: var(--text-mut); margin-top: 3px; text-transform: uppercase; letter-spacing: .4px; }
+  .ins-date-range { font-size: 11px; color: var(--text-mut); margin-top: 10px; }
+  .ins-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-sec); font-weight: 600; margin-bottom: 12px; }
+  .ins-empty-sm { font-size: 12px; color: var(--text-mut); line-height: 1.55; }
+  .day-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .day-label { color: var(--text-sec); min-width: 30px; font-size: 11px; }
+  .day-bar-track { flex: 1; background: var(--surface2); border-radius: 3px; height: 6px; overflow: hidden; }
+  .day-bar-fill { height: 100%; background: var(--border-br); border-radius: 3px; transition: width .3s ease; }
+  .day-bar-fill.top { background: var(--green); }
+  .day-val { color: var(--text-mut); min-width: 30px; text-align: right; font-size: 11px; }
+  .ins-best-day-line { font-size: 12px; color: var(--text); margin-bottom: 10px; }
+  .ins-note { font-size: 11px; color: var(--text-mut); margin-bottom: 10px; font-style: italic; }
+  .ins-trend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .ins-trend-arrow { font-size: 24px; line-height: 1; }
-  .ins-trend-dir  { font-size: 16px; font-weight: 600; }
-  .ins-trend-pct  { font-size: 13px; font-weight: 600; }
-  .ins-trend-detail { font-size: 12px; color: #9CA3AF; }
-  .ins-trend-detail strong { color: #E5E7EB; }
-  @media (max-width: 620px) { .ins-columns { grid-template-columns: 1fr; } }
+  .ins-trend-dir { font-size: 16px; font-weight: 600; }
+  .ins-trend-pct { font-size: 13px; font-weight: 600; }
+  .ins-trend-detail { font-size: 12px; color: var(--text-sec); }
+  .ins-trend-detail strong { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .stat-grid.cols-3, .stat-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+    .two-col, .ins-columns { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .main { padding: 24px 18px; }
+  }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="brand">
-    <div class="brand-line"></div>
-    <h1>Net Positive Method — Content Pipeline</h1>
-  </div>
-  <p class="subtitle">AI generates → you approve → copy for Canva → post to Pinterest</p>
-
-  <div id="windsor-panel" class="windsor-panel inactive">
-    <div class="windsor-header">
-      <div class="windsor-info">
-        <div class="windsor-title"><strong>Windsor:</strong> <span id="windsor-status-label">checking...</span></div>
-        <div class="windsor-meta" id="windsor-meta"></div>
-        <div class="windsor-stats" id="windsor-stats"></div>
-        <button class="windsor-expand-btn" id="windsor-expand-btn" onclick="toggleWindsorDetails()" style="display:none">▶ Show details</button>
+<div class="app">
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">⚡</div>
+      <div class="sb-brand-text">
+        <div class="sb-name">NPM Pipeline <span class="health-dot" id="health-dot" title="Server status"></span></div>
+        <div class="sb-sub">Net Positive Method</div>
       </div>
-      <div class="windsor-actions">
-        <label class="windsor-toggle-wrap" title="Toggle whether insights are injected into the Claude prompt">
-          <input type="checkbox" id="insights-toggle" checked onchange="onInsightsToggle()" />
-          Use in generation
+    </div>
+
+    <nav class="sb-nav">
+      <button class="nav-item active" data-view="overview" onclick="switchView('overview')"><span class="nav-icon">⚡</span> Overview</button>
+      <button class="nav-item" data-view="generate" onclick="switchView('generate')"><span class="nav-icon">🎯</span> Generate</button>
+      <button class="nav-item" data-view="queue" onclick="switchView('queue')"><span class="nav-icon">✅</span> Queue <span class="nav-badge" id="queue-count" style="display:none">0</span></button>
+      <button class="nav-item" data-view="insights" onclick="switchView('insights')"><span class="nav-icon">📊</span> Insights</button>
+      <button class="nav-item disabled" disabled title="Coming soon"><span class="nav-icon">⚙️</span> Settings <span class="nav-soon">Soon</span></button>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="conn-row">
+        <span class="conn-dot" id="canva-dot"></span>
+        <span class="conn-label">Canva</span>
+        <span class="conn-state" id="canva-state">MCP</span>
+      </div>
+      <div class="conn-row">
+        <span class="conn-dot" id="windsor-dot"></span>
+        <span class="conn-label">Windsor</span>
+        <button class="icon-btn" id="sb-refresh" onclick="refreshAllInsights()" title="Refresh insights">↻</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- ══ Overview ══════════════════════════════════════════ -->
+    <section id="view-overview" class="view active">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Overview</div>
+          <div class="page-sub">Your content pipeline at a glance</div>
+        </div>
+      </div>
+
+      <!-- Local stats — derived purely from ideas.json, no external API -->
+      <div id="ov-local"></div>
+
+      <div class="two-col">
+        <!-- Left -->
+        <div class="col-stack">
+          <div class="card card-pad">
+            <div class="panel-head">
+              <div class="panel-title">Top performing pins</div>
+              <div class="sub">Pinterest · last 30 days</div>
+            </div>
+            <div id="ov-top-pins"></div>
+          </div>
+          <div class="card card-pad">
+            <div class="panel-head">
+              <div class="panel-title">Recent ideas</div>
+              <button class="btn btn-ghost btn-sm" onclick="switchView('queue')">View all →</button>
+            </div>
+            <div id="ov-recent-ideas"></div>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="col-stack">
+          <div class="card card-pad">
+            <div class="panel-head"><div class="panel-title">Quick generate</div></div>
+            <div class="grid-2">
+              <div>
+                <label class="lbl">Platform</label>
+                <select id="qg-platform">
+                  <option value="pinterest" selected>Pinterest</option>
+                  <option value="reel">Reels</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">Count</label>
+                <select id="qg-count">
+                  <option value="5">5 ideas</option>
+                  <option value="10" selected>10 ideas</option>
+                  <option value="15">15 ideas</option>
+                </select>
+              </div>
+            </div>
+            <div style="height:14px"></div>
+            <button class="btn btn-green btn-md btn-block" id="qg-btn" onclick="quickGenerate()">Generate</button>
+            <div class="status-msg" id="qg-status"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="panel-head">
+              <div class="panel-title">Windsor status</div>
+              <button class="btn btn-ghost btn-sm" id="ov-windsor-refresh" onclick="refreshAllInsights()">↻ Refresh</button>
+            </div>
+            <div class="conn-row" style="margin-bottom:10px"><span class="conn-state" style="color:var(--text-sec)">Last fetched</span><span style="margin-left:auto;font-size:12px;color:var(--text)" id="ov-windsor-fetched">Never</span></div>
+            <div class="conn-row"><span class="conn-state" style="color:var(--text-sec)">Posts analyzed</span><span style="margin-left:auto;font-size:12px;color:var(--text)" id="ov-windsor-posts">0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Generate ══════════════════════════════════════════ -->
+    <section id="view-generate" class="view">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Generate</div>
+          <div class="page-sub">AI generates ideas → you approve → export for Canva</div>
+        </div>
+        <span class="pill tip" id="insights-pill" style="display:none">
+          <span id="insights-pill-text">⚡ Insights active</span>
+          <span class="tip-body" id="insights-pill-tip"></span>
+        </span>
+      </div>
+
+      <div class="card card-pad" style="margin-bottom:18px">
+        <div class="grid-2">
+          <div class="field">
+            <label class="lbl">Platform</label>
+            <select id="platform">
+              <option value="pinterest" selected>Pinterest (primary)</option>
+              <option value="reel">Instagram Reels</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="lbl">Ideas to generate</label>
+            <select id="count">
+              <option value="10" selected>10 ideas</option>
+              <option value="15">15 ideas</option>
+              <option value="5">5 ideas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="lbl">Content mix <span class="badge badge-seasonal" id="seasonal-badge" style="display:none">🌿 Seasonal</span></label>
+            <select id="mix" onchange="onMixChange()">
+              <option value="balanced">Balanced</option>
+              <option value="tracker">Tracker-heavy</option>
+              <option value="tips">Finance tips only</option>
+              <option value="sidehustle">Side hustle only</option>
+              <option value="seasonal">Seasonal 🌿</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="lbl">Tone</label>
+            <select id="tone">
+              <option value="direct">Direct + minimal</option>
+              <option value="educational">Educational</option>
+              <option value="motivational">Motivational</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="lbl">Brand notes <span style="text-transform:none;letter-spacing:0;color:var(--text-mut)">(optional — steer the AI)</span></label>
+          <textarea id="brand-notes" placeholder="e.g. Focus on behavior not budgeting. Never use the word 'budget'."></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-green btn-lg" id="gen-btn" onclick="generateIdeas()">Generate ideas</button>
+        <label class="pill" style="cursor:pointer" title="Inject Windsor performance data into the prompt">
+          <input type="checkbox" id="insights-toggle" checked onchange="onInsightsToggle()" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer" />
+          Use insights in generation
         </label>
-        <button class="btn-windsor-refresh" id="btn-refresh-insights" onclick="refreshInsights()">Refresh insights</button>
+        <span id="status"></span>
       </div>
-    </div>
-    <div class="windsor-details" id="windsor-details">
-      <div class="windsor-platforms" id="windsor-platforms"></div>
-      <div class="windsor-top-posts" id="windsor-top-posts"></div>
-      <div class="windsor-date-range" id="windsor-date-range"></div>
-    </div>
-  </div>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="generate" onclick="switchTab('generate')">Generate</button>
-    <button class="tab" data-tab="insights" onclick="switchTab('insights')">Insights</button>
-    <button class="tab" data-tab="queue" onclick="switchTab('queue')">Queue <span id="queue-count"></span></button>
-  </div>
+      <div id="ideas-list"></div>
+    </section>
 
-  <!-- ── Generate tab ─────────────────────────────────────────── -->
-  <div id="tab-generate" class="section active">
-    <div class="controls">
-      <div>
-        <label>Platform</label>
-        <select id="platform">
-          <option value="pinterest" selected>Pinterest (primary)</option>
-          <option value="reel">Instagram Reels</option>
-          <option value="both">Both</option>
-        </select>
+    <!-- ══ Queue ═════════════════════════════════════════════ -->
+    <section id="view-queue" class="view">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Queue</div>
+          <div class="page-sub">Review, approve, and export your ideas</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearQueue()">Clear all</button>
+        </div>
       </div>
-      <div>
-        <label>Ideas to generate</label>
-        <select id="count">
-          <option value="10" selected>10 ideas</option>
-          <option value="15">15 ideas</option>
-          <option value="5">5 ideas</option>
-        </select>
-      </div>
-      <div>
-        <label>Content mix</label>
-        <select id="mix" onchange="onMixChange()">
-          <option value="balanced">Balanced</option>
-          <option value="tracker">Tracker-heavy</option>
-          <option value="tips">Finance tips only</option>
-          <option value="sidehustle">Side hustle only</option>
-          <option value="seasonal">Seasonal 🌿</option>
-        </select>
-      </div>
-      <div>
-        <label>Tone</label>
-        <select id="tone">
-          <option value="direct">Direct + minimal</option>
-          <option value="educational">Educational</option>
-          <option value="motivational">Motivational</option>
-        </select>
-      </div>
-    </div>
-    <label>Brand notes (optional — steer the AI)</label>
-    <textarea id="brand-notes" placeholder="e.g. Focus on behavior not budgeting. Never use the word 'budget'."></textarea>
-    <div style="height:12px"></div>
-    <div class="insights-banner" id="insights-banner"></div>
-    <button class="btn-primary" id="gen-btn" onclick="generateIdeas()">Generate ideas</button>
-    <div class="status" id="status"></div>
-    <div id="ideas-list"></div>
-  </div>
 
-  <!-- ── Insights tab ─────────────────────────────────────────── -->
-  <div id="tab-insights" class="section">
-    <div class="ins-tab-header">
-      <div>
-        <div class="ins-tab-title">Performance Insights</div>
-        <div class="ins-tab-sub">30-day data from Windsor.ai · Refresh before generating</div>
-        <div class="ins-last-refresh" id="ins-last-refresh"></div>
+      <div class="stat-grid cols-4">
+        <div class="stat-card"><div class="label">Total</div><div class="value sm" id="s-total">0</div></div>
+        <div class="stat-card"><div class="label">Approved</div><div class="value sm" id="s-approved" style="color:var(--green)">0</div></div>
+        <div class="stat-card"><div class="label">Pending</div><div class="value sm" id="s-pending">0</div></div>
+        <div class="stat-card"><div class="label">Skipped</div><div class="value sm" id="s-skipped">0</div></div>
       </div>
-      <button class="btn-ins-refresh" id="btn-ins-refresh" onclick="refreshInsightsTab()">↻ Refresh</button>
-    </div>
-    <div id="ins-loading" class="ins-loading" style="display:none">
-      <span style="font-size:18px">⏳</span> Fetching insights…
-    </div>
-    <div id="ins-body" class="ins-columns">
-      <div class="ins-col" id="ins-col-pinterest"></div>
-      <div class="ins-col" id="ins-col-instagram"></div>
-    </div>
-  </div>
 
-  <!-- ── Queue tab ────────────────────────────────────────────── -->
-  <div id="tab-queue" class="section">
-    <div class="queue-stats">
-      <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total</div></div>
-      <div class="stat"><div class="stat-num" id="s-approved">0</div><div class="stat-label">Approved</div></div>
-      <div class="stat"><div class="stat-num" id="s-skipped">0</div><div class="stat-label">Skipped</div></div>
-      <div class="stat"><div class="stat-num" id="s-pending">0</div><div class="stat-label">Pending</div></div>
-    </div>
-    <div class="queue-actions">
-      <button class="btn-sm btn-canva-mcp" onclick="copyCanvaPrompt()">📋 Copy for Canva</button>
-      <button class="btn-sm" onclick="exportCSV()">Export CSV</button>
-      <button class="btn-sm" onclick="clearQueue()">Clear all</button>
-    </div>
-    <div class="canva-prompt-wrap" id="canva-prompt-wrap">
-      <div class="canva-prompt-label">
-        Canva MCP Prompt — paste into a new Claude conversation with Canva MCP enabled
-        <span id="canva-copy-confirm">✓ Copied!</span>
+      <div id="canva-export-cta" class="export-cta"></div>
+
+      <div class="canva-prompt-wrap" id="canva-prompt-wrap">
+        <div class="canva-prompt-label">
+          Canva MCP prompt — paste into a new Claude conversation with Canva MCP enabled
+          <span id="canva-copy-confirm">✓ Copied!</span>
+        </div>
+        <textarea class="canva-prompt-preview" id="canva-prompt-preview" readonly></textarea>
       </div>
-      <textarea class="canva-prompt-preview" id="canva-prompt-preview" readonly></textarea>
-    </div>
-    <div id="queue-list"><div class="empty">No ideas yet. Go to Generate.</div></div>
-  </div>
+
+      <div class="filter-tabs" id="queue-filters">
+        <button class="filter-tab active" data-filter="all" onclick="setQueueFilter('all')">All</button>
+        <button class="filter-tab" data-filter="approved" onclick="setQueueFilter('approved')">Approved</button>
+        <button class="filter-tab" data-filter="pending" onclick="setQueueFilter('pending')">Pending</button>
+        <button class="filter-tab" data-filter="skipped" onclick="setQueueFilter('skipped')">Skipped</button>
+      </div>
+
+      <div id="queue-list"></div>
+    </section>
+
+    <!-- ══ Insights ══════════════════════════════════════════ -->
+    <section id="view-insights" class="view">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Insights</div>
+          <div class="page-sub">30-day performance from Windsor.ai · refresh before generating</div>
+          <div class="page-sub" id="ins-last-refresh" style="color:var(--text-mut);font-size:12px"></div>
+        </div>
+        <button class="btn btn-md" id="btn-ins-refresh" onclick="refreshInsightsTab()">↻ Refresh</button>
+      </div>
+
+      <div id="ins-loading" style="display:none">
+        <div class="ins-columns">
+          <div class="ins-col"><div class="skel skel-line" style="width:40%"></div><div class="skel skel-card"></div><div class="skel skel-card"></div></div>
+          <div class="ins-col"><div class="skel skel-line" style="width:40%"></div><div class="skel skel-card"></div><div class="skel skel-card"></div></div>
+        </div>
+      </div>
+      <div id="ins-body" class="ins-columns">
+        <div class="ins-col" id="ins-col-pinterest"></div>
+        <div class="ins-col" id="ins-col-instagram"></div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <script>
 const API = '/api';
 let allIdeas = [];
+let queueFilter = 'all';
+let sessionGenerated = 0; // ideas generated since server start (from /api/health, incremented on generate)
 
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.tab === name);
-  });
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+// ── View switching ────────────────────────────────────────────────
+function switchView(name) {
+  if (!document.getElementById('view-' + name)) name = 'overview';
+  document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.view === name));
+  document.querySelectorAll('.view').forEach(s => s.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (location.hash !== '#' + name) location.hash = name;
+  if (name === 'overview') renderOverview();
   if (name === 'queue')    renderQueue();
   if (name === 'insights') renderInsightsTab();
 }
+// Back-compat alias
+function switchTab(name) { switchView(name); }
 
 function setStatus(msg, type) {
   const el = document.getElementById('status');
-  el.textContent = msg;
-  el.className = 'status' + (type ? ' ' + type : '');
+  if (!el) return;
+  if (!msg) { el.innerHTML = ''; return; }
+  el.innerHTML = type === 'error' ? `<span class="err-pill">⚠ ${escapeHtml(msg)}</span>`
+              : type === 'ok'    ? `<span class="ok-pill">✓ ${escapeHtml(msg)}</span>`
+              : `<span style="font-size:12px;color:var(--text-sec)">${escapeHtml(msg)}</span>`;
 }
 
 function onMixChange() {
-  // Seasonal always needs 15 ideas (8+4+3) — auto-select the 15 count
-  if (document.getElementById('mix').value === 'seasonal') {
-    document.getElementById('count').value = '15';
-  }
+  const isSeasonal = document.getElementById('mix').value === 'seasonal';
+  if (isSeasonal) document.getElementById('count').value = '15';
+  document.getElementById('seasonal-badge').style.display = isSeasonal ? 'inline-flex' : 'none';
 }
 
-// ── Windsor insights (shared state) ──────────────────────────────
+// ── Windsor insights (shared state) ───────────────────────────────
 let igInsights  = null;
 let pinInsights = null;
 
@@ -332,13 +551,6 @@ function onInsightsToggle() {
   renderBanner();
 }
 
-function toggleWindsorDetails() {
-  const details = document.getElementById('windsor-details');
-  const btn     = document.getElementById('windsor-expand-btn');
-  const open    = details.classList.toggle('open');
-  btn.textContent = open ? '▼ Hide details' : '▶ Show details';
-}
-
 async function loadInsights(force = false) {
   const qs = force ? '?force=true' : '';
   const [igRes, pinRes] = await Promise.allSettled([
@@ -347,147 +559,256 @@ async function loadInsights(force = false) {
   ]);
   if (igRes.status  === 'fulfilled' && igRes.value?.success)  igInsights  = igRes.value.insights;
   if (pinRes.status === 'fulfilled' && pinRes.value?.success) pinInsights = pinRes.value.insights;
-  renderInsightsPanel();
+  updateInsightsUI();
 }
 
-async function refreshInsights() {
-  const btn = document.getElementById('btn-refresh-insights');
-  btn.disabled = true;
-  btn.textContent = 'Refreshing…';
-  document.getElementById('windsor-status-label').textContent = 'fetching…';
+// Unified refresh used by sidebar + overview buttons
+async function refreshAllInsights() {
+  const btns = [document.getElementById('sb-refresh'), document.getElementById('ov-windsor-refresh')].filter(Boolean);
+  btns.forEach(b => { b.disabled = true; b.classList.add('spin'); });
   await loadInsights(true);
-  btn.disabled = false;
-  btn.textContent = 'Refresh insights';
+  btns.forEach(b => { b.disabled = false; b.classList.remove('spin'); });
+  // keep insights page in sync if open
+  if (document.getElementById('view-insights').classList.contains('active')) {
+    renderInsightsCol('pinterest', pinInsights);
+    renderInsightsCol('instagram', igInsights);
+    updateLastRefreshLabel();
+  }
 }
 
-function renderInsightsPanel() {
-  const panel     = document.getElementById('windsor-panel');
-  const label     = document.getElementById('windsor-status-label');
-  const meta      = document.getElementById('windsor-meta');
-  const stats     = document.getElementById('windsor-stats');
-  const expandBtn = document.getElementById('windsor-expand-btn');
-
+// Push insights data into sidebar status, overview, and the generate banner
+function updateInsightsUI() {
   const hasIg  = igInsights?.insight_text  && igInsights.total_posts  > 0;
   const hasPin = pinInsights?.insight_text && pinInsights.total_posts > 0;
-
-  if (!hasIg && !hasPin) {
-    panel.className   = 'windsor-panel inactive';
-    label.textContent = 'No data yet';
-    meta.textContent  = igInsights?.warning || pinInsights?.warning || 'Click Refresh insights to fetch';
-    stats.innerHTML   = '';
-    expandBtn.style.display = 'none';
-    renderBanner();
-    return;
-  }
-
-  panel.className = 'windsor-panel active';
-  const parts = [];
-  if (hasPin) parts.push(`📌 Pinterest: ${pinInsights.total_posts} pins`);
-  if (hasIg)  parts.push(`📸 Instagram: ${igInsights.total_posts} posts`);
-  label.textContent = parts.join(' · ');
-
   const newest = [igInsights?.fetched_at, pinInsights?.fetched_at].filter(Boolean).sort().at(-1);
-  meta.textContent = newest ? `Last fetched ${formatAge(new Date(newest))}` : '';
+  const freshH = newest ? (Date.now() - new Date(newest).getTime()) / 3600000 : 999;
 
-  const primary  = hasPin ? pinInsights : igInsights;
-  const agg      = primary.aggregate || {};
-  const statRows = [];
-  if (agg.avg_engagement > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_engagement}</span> <span class="lbl">avg eng${hasPin ? ' (pin)' : ''}</span></div>`);
-  if (agg.avg_saves      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_saves}</span> <span class="lbl">avg saves</span></div>`);
-  if (agg.avg_reach      > 0) statRows.push(`<div class="windsor-stat"><span class="val">${agg.avg_reach}</span> <span class="lbl">avg reach</span></div>`);
-  stats.innerHTML = statRows.join('');
-  expandBtn.style.display = 'inline-flex';
-  renderDetails();
+  // Sidebar Windsor dot
+  const wDot = document.getElementById('windsor-dot');
+  if (hasIg || hasPin) wDot.className = 'conn-dot ' + (freshH < 24 ? 'on' : 'warn');
+  else wDot.className = 'conn-dot';
+
+  renderOverview();
   renderBanner();
 }
 
-function renderDetails() {
-  const platforms = document.getElementById('windsor-platforms');
-  const rows = [];
-  if (pinInsights?.total_posts > 0) {
-    const a = pinInsights.aggregate || {};
-    rows.push(`<div class="windsor-platform-badge"><span class="platform-name">📌 Pinterest</span> <span class="platform-stat">${pinInsights.total_posts} pins · avg ${a.avg_saves ?? 0} saves · avg ${a.avg_engagement ?? 0} eng</span></div>`);
-  }
-  if (igInsights?.total_posts > 0) {
-    const a = igInsights.aggregate || {};
-    rows.push(`<div class="windsor-platform-badge"><span class="platform-name">📸 Instagram</span> <span class="platform-stat">${igInsights.total_posts} posts · avg ${a.avg_engagement ?? 0} eng · avg ${a.avg_reach ?? 0} reach</span></div>`);
-  }
-  platforms.innerHTML = rows.join('');
-
-  const topPostsEl = document.getElementById('windsor-top-posts');
-  const allTop = [
-    ...(pinInsights?.top_posts || []).map(p => ({ ...p, _src: '📌' })),
-    ...(igInsights?.top_posts  || []).map(p => ({ ...p, _src: '📸' })),
-  ].sort((a, b) => (b.saves || b.engagement || 0) - (a.saves || a.engagement || 0)).slice(0, 3);
-
-  if (allTop.length) {
-    const postRows = allTop.map((p, i) => {
-      const metric = p.saves > 0 ? `${p.saves} saves` : `${p.engagement} eng`;
-      const link   = p.url  ? `<a class="top-post-link" href="${escapeHtml(p.url)}" target="_blank">${escapeHtml(p.url)}</a>` : '';
-      const title  = p.title ? `<span class="top-post-title">"${escapeHtml(p.title)}"</span>` : '';
-      return `<div class="top-post-row"><span class="top-post-rank">${i+1}.</span><span class="top-post-metric">${p._src} ${metric}</span>${title || link}</div>`;
-    }).join('');
-    topPostsEl.innerHTML = `<h4>Top performers</h4>${postRows}`;
-  } else {
-    topPostsEl.innerHTML = '';
-  }
-
-  const dateRangeEl = document.getElementById('windsor-date-range');
-  const ranges = [];
-  if (pinInsights?.date_range?.from) ranges.push(`Pinterest: ${pinInsights.date_range.from} → ${pinInsights.date_range.to || 'today'}`);
-  if (igInsights?.date_range?.from)  ranges.push(`Instagram: ${igInsights.date_range.from} → ${igInsights.date_range.to || 'today'}`);
-  dateRangeEl.textContent = ranges.length ? `Date ranges — ${ranges.join(' | ')}` : '';
-}
-
 function renderBanner() {
-  const banner  = document.getElementById('insights-banner');
-  const enabled = insightsEnabled();
+  const pill = document.getElementById('insights-pill');
+  if (!pill) return;
+  const txt  = document.getElementById('insights-pill-text');
+  const tip  = document.getElementById('insights-pill-tip');
   const hasPin  = pinInsights?.insight_text && pinInsights.total_posts > 0;
   const hasIg   = igInsights?.insight_text  && igInsights.total_posts  > 0;
+  const enabled = insightsEnabled();
 
-  if (!hasPin && !hasIg) { banner.className = 'insights-banner'; return; }
+  if (!hasPin && !hasIg) { pill.style.display = 'none'; return; }
+  pill.style.display = 'inline-flex';
+
   if (!enabled) {
-    banner.className = 'insights-banner visible disabled';
-    banner.innerHTML = '<strong>Insights off</strong> — generation will use base prompt only. Toggle "Use in generation" to re-enable.';
+    pill.className = 'pill off tip';
+    txt.textContent = '○ Insights off';
+    tip.textContent = 'Generation uses the base prompt only. Toggle "Use insights in generation" to feed Windsor data into Claude.';
     return;
   }
-  const src = [hasPin ? '📌 Pinterest' : null, hasIg ? '📸 Instagram' : null].filter(Boolean).join(' + ');
-  banner.className = 'insights-banner visible';
-  banner.innerHTML = `<strong>⚡ Insights active</strong> — Claude is using ${src} performance data. Pinterest patterns are weighted as primary.`;
+  const srcParts = [];
+  if (hasPin) srcParts.push(`Pinterest (${pinInsights.total_posts} pins)`);
+  if (hasIg)  srcParts.push(`Instagram (${igInsights.total_posts} posts)`);
+  pill.className = 'pill active tip';
+  txt.textContent = '⚡ Insights active';
+  tip.textContent = `Claude is weighting ${srcParts.join(' + ')} from the last 30 days. Pinterest patterns are prioritized for pin ideas.`;
 }
 
-function renderInsightsPanelError(msg) {
-  const panel = document.getElementById('windsor-panel');
-  document.getElementById('windsor-status-label').textContent = 'Not configured';
-  document.getElementById('windsor-meta').textContent         = msg;
-  document.getElementById('windsor-stats').innerHTML          = '';
-  document.getElementById('insights-banner').className        = 'insights-banner';
-  document.getElementById('windsor-expand-btn').style.display = 'none';
-  panel.className = 'windsor-panel no-key';
+// ── Overview rendering ────────────────────────────────────────────
+function renderOverview() {
+  if (!document.getElementById('view-overview')) return;
+
+  renderLocalStats();
+  renderOverviewTopPins();
+  renderOverviewRecent();
+
+  // Windsor status card (optional external data)
+  const newest = [igInsights?.fetched_at, pinInsights?.fetched_at].filter(Boolean).sort().at(-1);
+  document.getElementById('ov-windsor-fetched').textContent = newest ? formatLastRefresh(newest) : 'Never';
+  const posts = (pinInsights?.total_posts || 0) + (igInsights?.total_posts || 0);
+  document.getElementById('ov-windsor-posts').textContent = posts;
 }
 
+// ── Local stats — derived purely from ideas.json ──────────────────
+const CT_LABELS = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle', seasonal: 'seasonal' };
+
+function renderLocalStats() {
+  const host = document.getElementById('ov-local');
+  if (!host) return;
+
+  const total = allIdeas.length;
+  if (!total) {
+    host.innerHTML = `<div class="card card-pad"><div class="empty" style="padding:36px 24px"><div class="emoji">📊</div><div class="title">No stats yet</div><div class="hint">Generate your first batch of ideas to see stats.</div></div></div>`;
+    return;
+  }
+
+  const approved = allIdeas.filter(i => i.status === 'approved').length;
+  const pending  = allIdeas.filter(i => i.status === 'pending').length;
+  const approvalRate = Math.round(approved / total * 100);
+
+  const cards = `
+    <div class="stat-grid cols-4">
+      <div class="stat-card">
+        <div class="label">Total ideas generated</div>
+        <div class="value">${total}</div>
+        <div class="meta">all time · from ideas.json</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Approval rate</div>
+        <div class="value">${approvalRate}%</div>
+        <div class="meta">${approved} of ${total} approved</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Ideas this session</div>
+        <div class="value">${sessionGenerated}</div>
+        <div class="meta">since server start</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Queue health</div>
+        <div class="value sm"><span class="pos">${approved}</span> approved</div>
+        <div class="meta">${pending} pending · ${allIdeas.filter(i => i.status === 'skipped').length} skipped</div>
+      </div>
+    </div>`;
+
+  const charts = `
+    <div class="two-col" style="margin-bottom:22px">
+      <div class="card card-pad">
+        <div class="panel-head"><div class="panel-title">Content type breakdown</div><div class="sub">by idea count</div></div>
+        ${buildLocalBars(countBy('content_type'), CT_LABELS)}
+      </div>
+      <div class="card card-pad">
+        <div class="panel-head"><div class="panel-title">Platform breakdown</div><div class="sub">by idea count</div></div>
+        ${buildLocalBars(countBy('platform'), null)}
+      </div>
+    </div>`;
+
+  host.innerHTML = cards + charts;
+}
+
+function countBy(field) {
+  const m = {};
+  for (const i of allIdeas) { const k = i[field] || 'unknown'; m[k] = (m[k] || 0) + 1; }
+  return m;
+}
+
+function buildLocalBars(counts, labelMap) {
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const total   = entries.reduce((s, [, v]) => s + v, 0);
+  if (!total) return '<div class="ins-empty-sm">No data yet</div>';
+  const maxPct  = Math.max(...entries.map(([, v]) => Math.round(v / total * 100)));
+  return entries.map(([k, v]) => {
+    const pct   = Math.round(v / total * 100);
+    const w     = maxPct > 0 ? Math.round(pct / maxPct * 100) : 0;
+    const label = (labelMap && labelMap[k]) || k.replace(/_/g, ' ');
+    const top   = pct === maxPct;
+    return `<div class="day-bar-row"><span class="day-label" style="min-width:88px">${escapeHtml(label)}</span><div class="day-bar-track"><div class="day-bar-fill${top ? ' top' : ''}" style="width:${w}%"></div></div><span class="day-val" style="min-width:62px;text-align:right">${pct}% · ${v}</span></div>`;
+  }).join('');
+}
+
+function renderOverviewTopPins() {
+  const el = document.getElementById('ov-top-pins');
+  const posts = (pinInsights?.top_posts || []).slice(0, 3);
+  if (!posts.length) {
+    el.innerHTML = `<div class="empty" style="padding:24px 0"><div class="title" style="font-size:13px">No Pinterest data yet</div><div class="hint">Click refresh on the Windsor status panel to pull your latest pin performance.</div></div>`;
+    return;
+  }
+  el.innerHTML = posts.map((p, i) => {
+    let raw = p.title || `Pin ${p.pin_id || ''}`;
+    const title = raw.length > 42 ? raw.slice(0, 39) + '…' : raw;
+    const href  = p.url || (p.pin_id ? `https://www.pinterest.com/pin/${p.pin_id}/` : null);
+    const open  = href ? `<a class="perf-open" href="${escapeHtml(href)}" target="_blank" title="Open">↗</a>` : '';
+    return `<div class="perf-row">
+      <span class="perf-rank">${i + 1}</span>
+      <span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span>
+      <span class="perf-metric">${(p.impressions || 0).toLocaleString()} reach</span>
+      <span class="perf-sub">${p.saves || 0} saves</span>${open}
+    </div>`;
+  }).join('');
+}
+
+function renderOverviewRecent() {
+  const el = document.getElementById('ov-recent-ideas');
+  const recent = allIdeas.slice(0, 3);
+  if (!recent.length) {
+    el.innerHTML = `<div class="empty" style="padding:24px 0"><div class="title" style="font-size:13px">No ideas generated yet</div><div class="hint">Use Quick generate or the Generate page to create your first batch.</div></div>`;
+    return;
+  }
+  el.innerHTML = recent.map(idea => {
+    const approvedCls = idea.status === 'approved' ? 'btn-approve approved' : 'btn-approve';
+    const approvedLbl = idea.status === 'approved' ? '✓' : 'approve';
+    const pClass = badgeClass(idea.platform);
+    return `<div class="mini-row">
+      <span class="badge ${pClass} mini-badge">${escapeHtml(idea.platform)}</span>
+      <span class="mini-hook" title="${escapeAttr(idea.hook)}">${escapeHtml(idea.hook)}</span>
+      <button class="${approvedCls}" style="height:26px;padding:0 12px" onclick="toggleApprove(${idea.id})">${approvedLbl}</button>
+    </div>`;
+  }).join('');
+}
+
+function badgeClass(platform) {
+  return { Pinterest: 'badge-pinterest', Reel: 'badge-reel', Both: 'badge-both' }[platform] || 'badge-pinterest';
+}
+
+// ── Quick generate (overview) ─────────────────────────────────────
+async function quickGenerate() {
+  const btn = document.getElementById('qg-btn');
+  const statusEl = document.getElementById('qg-status');
+  btn.disabled = true; btn.textContent = 'Generating…';
+  statusEl.innerHTML = '<span style="font-size:12px;color:var(--text-sec)">Calling Claude…</span>';
+  try {
+    const res = await fetch(API + '/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        platform:    document.getElementById('qg-platform').value,
+        count:       parseInt(document.getElementById('qg-count').value),
+        mix:         'balanced',
+        tone:        'direct',
+        brandNotes:  '',
+        useInsights: insightsEnabled()
+      })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Generation failed');
+    allIdeas = [...data.ideas, ...allIdeas];
+    sessionGenerated += data.ideas.length;
+    updateCounts();
+    renderOverview();
+    statusEl.innerHTML = `<span class="ok-pill">✓ ${data.ideas.length} ideas added</span>`;
+  } catch (e) {
+    statusEl.innerHTML = `<span class="err-pill">⚠ ${escapeHtml(e.message)}</span>`;
+  }
+  btn.disabled = false; btn.textContent = 'Generate';
+}
+
+// ── Age formatting ────────────────────────────────────────────────
 function formatAge(date) {
   const diffMs = Date.now() - date.getTime();
+  const diffM  = Math.floor(diffMs / 60000);
   const diffH  = Math.floor(diffMs / 3600000);
-  const diffM  = Math.floor((diffMs % 3600000) / 60000);
-  if (diffH >= 1) return `${diffH}h ${diffM}m ago`;
-  return `${diffM}m ago`;
+  const diffD  = Math.floor(diffMs / 86400000);
+  if (diffD >= 1) return `${diffD}d ago`;
+  if (diffH >= 1) return `${diffH}h ${diffM % 60}m ago`;
+  if (diffM >= 1) return `${diffM}m ago`;
+  return 'just now';
 }
 
 // ── Insights tab rendering ────────────────────────────────────────
-
 async function renderInsightsTab() {
   const loading = document.getElementById('ins-loading');
   const body    = document.getElementById('ins-body');
 
   if (!igInsights && !pinInsights) {
-    loading.style.display = 'flex';
+    loading.style.display = 'block';
     body.style.display    = 'none';
     await loadInsights(false);
     loading.style.display = 'none';
     body.style.display    = 'grid';
   }
-
   renderInsightsCol('pinterest', pinInsights);
   renderInsightsCol('instagram', igInsights);
   updateLastRefreshLabel();
@@ -498,17 +819,15 @@ async function refreshInsightsTab() {
   const loading = document.getElementById('ins-loading');
   const body    = document.getElementById('ins-body');
 
-  btn.disabled    = true;
-  btn.textContent = 'Refreshing…';
-  loading.style.display = 'flex';
+  btn.disabled = true; btn.textContent = 'Refreshing…';
+  loading.style.display = 'block';
   body.style.display    = 'none';
 
   await loadInsights(true);
 
   loading.style.display = 'none';
   body.style.display    = 'grid';
-  btn.disabled    = false;
-  btn.textContent = '↻ Refresh';
+  btn.disabled = false; btn.textContent = '↻ Refresh';
   renderInsightsCol('pinterest', pinInsights);
   renderInsightsCol('instagram', igInsights);
   updateLastRefreshLabel();
@@ -523,10 +842,10 @@ function renderInsightsCol(platform, data) {
     el.innerHTML = `
       <div class="ins-platform-label">${emoji} ${name}</div>
       <div class="ins-card">
-        <div class="ins-empty">
-          <div style="font-size:28px;margin-bottom:10px">${emoji}</div>
-          <div style="margin-bottom:6px">No ${name} data yet</div>
-          <div style="color:#6B7280;font-size:12px">Connect your account in <a href="https://windsor.ai" target="_blank">Windsor.ai</a> then click Refresh</div>
+        <div class="empty" style="padding:32px 12px">
+          <div class="emoji">${emoji}</div>
+          <div class="title">No ${name} engagement data yet</div>
+          <div class="hint">Windsor free tier returns reach only. Connect your ${name} account in <a href="https://windsor.ai" target="_blank">Windsor.ai</a> (or upgrade for full metrics), then click Refresh.</div>
         </div>
       </div>`;
     return;
@@ -545,26 +864,26 @@ function renderInsightsCol(platform, data) {
 }
 
 function getFreshness(fetchedAt) {
-  if (!fetchedAt) return { status: 'red', label: 'No data', color: '#F87171' };
+  if (!fetchedAt) return { status: 'red', label: 'No data', color: 'var(--red)' };
   const ageH = (Date.now() - new Date(fetchedAt).getTime()) / 3600000;
-  if (ageH < 6)  return { status: 'green',  label: `${Math.round(ageH * 60)}m ago`, color: '#22C55E' };
-  if (ageH < 24) return { status: 'yellow', label: `${Math.round(ageH)}h ago`,      color: '#F59E0B' };
-  return              { status: 'yellow', label: `${Math.round(ageH / 24)}d ago`,   color: '#F59E0B' };
+  if (ageH < 6)  return { status: 'green',  label: `${Math.round(ageH * 60)}m ago`, color: 'var(--green)' };
+  if (ageH < 24) return { status: 'yellow', label: `${Math.round(ageH)}h ago`,      color: 'var(--amber)' };
+  return              { status: 'yellow', label: `${Math.round(ageH / 24)}d ago`,   color: 'var(--amber)' };
 }
 
 function buildHeaderCard(data, agg, freshness, platform) {
   const dr        = data.date_range || {};
   const dateLabel = dr.from ? `${dr.from} → ${dr.to || 'today'}` : '';
-  const primaryStatLabel = platform === 'pinterest' ? 'Avg Saves'        : 'Avg Interactions';
+  const primaryStatLabel = platform === 'pinterest' ? 'Avg Saves'          : 'Avg Interactions';
   const primaryStatVal   = platform === 'pinterest' ? (agg.avg_saves ?? 0) : (agg.avg_engagement ?? 0);
   return `
     <div class="ins-card ins-header-card">
       <div class="ins-card-stats">
         <div class="ins-stat"><div class="ins-stat-val">${data.total_posts}</div><div class="ins-stat-lbl">Posts</div></div>
-        <div class="ins-stat"><div class="ins-stat-val">${agg.avg_reach ?? 0}</div><div class="ins-stat-lbl">Avg Reach</div></div>
+        <div class="ins-stat"><div class="ins-stat-val">${(agg.avg_reach ?? 0).toLocaleString()}</div><div class="ins-stat-lbl">Avg Reach</div></div>
         <div class="ins-stat"><div class="ins-stat-val">${primaryStatVal}</div><div class="ins-stat-lbl">${primaryStatLabel}</div></div>
         <div class="ins-stat">
-          <div class="ins-stat-val" style="display:flex;align-items:center;gap:5px;font-size:13px">
+          <div class="ins-stat-val" style="display:flex;align-items:center;gap:5px;font-size:14px">
             <span style="width:8px;height:8px;border-radius:50%;background:${freshness.color};display:inline-block;flex-shrink:0"></span>
             ${freshness.label}
           </div>
@@ -576,25 +895,29 @@ function buildHeaderCard(data, agg, freshness, platform) {
 }
 
 function buildTopPerformers(posts, platform) {
-  if (!posts.length) return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="ins-empty-sm">No post data available</div></div>`;
+  if (!posts.length) return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="ins-empty-sm">No post-level data available — Windsor returned aggregate reach only.</div></div>`;
   const rows = posts.map((p, i) => {
     let raw = p.title || '';
     if (!raw && platform === 'instagram') raw = `${(p.media_type || 'Post')} · ${p.date || ''}`.trim();
-    const title     = raw.length > 48 ? raw.slice(0, 45) + '…' : (raw || '—');
+    const title     = raw.length > 46 ? raw.slice(0, 43) + '…' : (raw || '—');
     const metric    = platform === 'pinterest' ? p.saves       : p.engagement;
     const metricLbl = platform === 'pinterest' ? 'saves'       : 'eng';
     const reach     = platform === 'pinterest' ? p.impressions : p.reach;
     const href      = p.url || (platform === 'pinterest' && p.pin_id ? `https://www.pinterest.com/pin/${p.pin_id}/` : null);
-    const openLink  = href ? `<a class="ins-open-link" href="${escapeHtml(href)}" target="_blank" title="Open">↗</a>` : '';
-    const rowClass  = i % 2 === 0 ? 'perf-row perf-row-alt' : 'perf-row';
-    return `<div class="${rowClass}"><span class="perf-rank">${i + 1}</span><span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span><span class="perf-metric">${metric} ${metricLbl}</span><span class="perf-reach">${reach} reach</span>${openLink}</div>`;
+    const openLink  = href ? `<a class="perf-open" href="${escapeHtml(href)}" target="_blank" title="Open">↗</a>` : '';
+    return `<div class="perf-row">
+      <span class="perf-rank">${i + 1}</span>
+      <span class="perf-title" title="${escapeAttr(raw)}">${escapeHtml(title)}</span>
+      <span class="perf-metric">${metric} ${metricLbl}</span>
+      <span class="perf-sub">${(reach || 0).toLocaleString()} reach</span>${openLink}
+    </div>`;
   }).join('');
-  return `<div class="ins-card"><div class="ins-section-title">Top Performers</div><div class="perf-table">${rows}</div></div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Top Performers</div>${rows}</div>`;
 }
 
 function buildContentTypeBreakdown(posts) {
   const hasCT = posts.some(p => p.content_type);
-  if (!hasCT) return `<div class="ins-card"><div class="ins-section-title">Content Type Breakdown</div><div class="ins-empty-sm">Content type data not available — tag your ideas to unlock this view</div></div>`;
+  if (!hasCT) return `<div class="ins-card"><div class="ins-section-title">Content Type Breakdown</div><div class="ins-empty-sm">Content type data not available — tag your ideas to unlock this view.</div></div>`;
   const groups = {};
   for (const p of posts) {
     const ct = p.content_type || 'unknown';
@@ -614,7 +937,7 @@ function buildContentTypeBreakdown(posts) {
 
 function buildBestTimes(dayBreakdown, totalPosts) {
   if (!dayBreakdown || dayBreakdown.length === 0) {
-    const msg = (totalPosts || 0) < 10 ? 'Need more posts to determine best times' : 'Day breakdown not available in this dataset';
+    const msg = (totalPosts || 0) < 10 ? 'Need more posts to determine best times.' : 'Day breakdown not available in this dataset.';
     return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div><div class="ins-empty-sm">${msg}</div></div>`;
   }
   const best      = dayBreakdown[0];
@@ -626,20 +949,20 @@ function buildBestTimes(dayBreakdown, totalPosts) {
     return `<div class="day-bar-row"><span class="day-label">${d.day}</span><div class="day-bar-track"><div class="day-bar-fill${isTop ? ' top' : ''}" style="width:${pct}%"></div></div><span class="day-val">${d.avg_reach}</span></div>`;
   }).join('');
   const bestLine = maxR > 0
-    ? `<div class="ins-best-day-line">Best day: <strong style="color:#22C55E">${best.day}</strong> <span style="color:#6B7280">(avg reach ${best.avg_reach})</span></div>`
-    : `<div class="ins-best-day-line" style="color:#4B5563">All reach values are zero — waiting for data</div>`;
-  return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div>${bestLine}<div class="ins-note">Hour-of-day not available — Windsor provides daily-level data only</div>${bars}</div>`;
+    ? `<div class="ins-best-day-line">Best day: <strong style="color:var(--green)">${best.day}</strong> <span style="color:var(--text-mut)">(avg reach ${best.avg_reach})</span></div>`
+    : `<div class="ins-best-day-line" style="color:var(--text-mut)">All reach values are zero — waiting for data</div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Best Posting Times</div>${bestLine}<div class="ins-note">Hour-of-day not available — Windsor provides daily-level data only.</div>${bars}</div>`;
 }
 
 function buildTrend(dailyData, platform) {
   const metric = platform === 'pinterest' ? 'impressions' : 'reach';
   const trend  = computeTrend(dailyData, metric);
-  if (!trend) return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-empty-sm">Not enough data yet — need 14+ days of history</div></div>`;
+  if (!trend) return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-empty-sm">Not enough history yet — need 14+ days of data.</div></div>`;
   const arrow    = trend.dir === 'up' ? '↑' : trend.dir === 'down' ? '↓' : '→';
-  const color    = trend.dir === 'up' ? '#22C55E' : trend.dir === 'down' ? '#F87171' : '#F59E0B';
+  const color    = trend.dir === 'up' ? 'var(--green)' : trend.dir === 'down' ? 'var(--red)' : 'var(--amber)';
   const change   = trend.priorAvg > 0 ? Math.round((trend.lastAvg - trend.priorAvg) / trend.priorAvg * 100) : 0;
   const dirLabel = trend.dir.charAt(0).toUpperCase() + trend.dir.slice(1);
-  return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-trend-row"><span class="ins-trend-arrow" style="color:${color}">${arrow}</span><span class="ins-trend-dir" style="color:${color}">${dirLabel}</span><span class="ins-trend-pct" style="color:${color}">${change > 0 ? '+' : ''}${change}%</span></div><div class="ins-trend-detail">Last 7 days avg: <strong>${trend.lastAvg}</strong> &nbsp;vs&nbsp; prior 7 days: <strong>${trend.priorAvg}</strong></div></div>`;
+  return `<div class="ins-card"><div class="ins-section-title">Reach Trend</div><div class="ins-trend-row"><span class="ins-trend-arrow" style="color:${color}">${arrow}</span><span class="ins-trend-dir" style="color:${color}">${dirLabel}</span><span class="ins-trend-pct" style="color:${color}">${change > 0 ? '+' : ''}${change}%</span></div><div class="ins-trend-detail">Last 7 days avg: <strong>${trend.lastAvg.toLocaleString()}</strong> &nbsp;vs&nbsp; prior 7 days: <strong>${trend.priorAvg.toLocaleString()}</strong></div></div>`;
 }
 
 function formatLastRefresh(isoString) {
@@ -658,7 +981,7 @@ function formatLastRefresh(isoString) {
 }
 
 function updateLastRefreshLabel() {
-  const el     = document.getElementById('ins-last-refresh');
+  const el = document.getElementById('ins-last-refresh');
   if (!el) return;
   const newest = [igInsights?.fetched_at, pinInsights?.fetched_at].filter(Boolean).sort().at(-1);
   el.textContent = newest ? `Last refreshed: ${formatLastRefresh(newest)}` : '';
@@ -677,19 +1000,23 @@ function computeTrend(dailyData, metric) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-
 async function loadHealth() {
   try {
     const res  = await fetch(API + '/health');
     const data = await res.json();
+    sessionGenerated = data.session_generated || 0;
+    if (data.status === 'ok') document.getElementById('health-dot').classList.add('ok');
     if (!data.windsor_key_set) {
-      renderInsightsPanelError('Add WINDSOR_API_KEY to .env to enable');
+      const dot = document.getElementById('windsor-dot');
+      dot.className = 'conn-dot warn';
+      document.getElementById('windsor-dot').title = 'WINDSOR_API_KEY not set in .env';
     }
     const savedToggle = localStorage.getItem('npm_insights_enabled');
     if (savedToggle === 'false') {
       const tog = document.getElementById('insights-toggle');
       if (tog) tog.checked = false;
     }
+    renderOverview();
   } catch (e) {}
 }
 
@@ -699,6 +1026,9 @@ async function loadIdeas() {
     const data = await res.json();
     allIdeas   = data.ideas || [];
     updateCounts();
+    renderOverview();
+    // Re-render whichever view is active (handles deep-links / async race)
+    if (document.getElementById('view-queue').classList.contains('active')) renderQueue();
   } catch (e) {
     setStatus('Backend not reachable. Is the server running?', 'error');
   }
@@ -728,8 +1058,10 @@ async function generateIdeas() {
     if (!data.success) throw new Error(data.error || 'Generation failed');
 
     allIdeas = [...data.ideas, ...allIdeas];
+    sessionGenerated += data.ideas.length;
     renderIdeas(data.ideas);
     updateCounts();
+    renderOverview();
     setStatus(`${data.ideas.length} ideas generated.`, 'ok');
   } catch (e) {
     setStatus('Error: ' + e.message, 'error');
@@ -753,59 +1085,70 @@ function makeCard(idea) {
   div.className = cls;
   div.id        = 'card-' + idea.id;
 
-  const pClass      = { Pinterest: 'badge-pinterest', Reel: 'badge-reel', Both: 'badge-both' }[idea.platform] || 'badge-pinterest';
-  const typeLabel   = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle', seasonal: 'seasonal 🌿' }[idea.content_type] || (idea.content_type || '');
-  const typeBadge   = idea.content_type === 'seasonal' ? 'badge badge-seasonal' : 'badge badge-type';
+  const pClass       = badgeClass(idea.platform);
+  const typeLabel    = { tracker: 'tracker', finance_tip: 'finance tip', side_hustle: 'side hustle', seasonal: 'seasonal 🌿' }[idea.content_type] || (idea.content_type || '');
+  const typeBadge    = idea.content_type === 'seasonal' ? 'badge badge-seasonal' : 'badge badge-type';
   const approveClass = idea.status === 'approved' ? 'btn-approve approved' : 'btn-approve';
   const approveLabel = idea.status === 'approved' ? 'approved ✓' : 'approve';
 
   div.innerHTML = `
     <div class="idea-meta">
-      <span class="badge ${pClass}">${idea.platform}</span>
-      <span class="${typeBadge}">${typeLabel}</span>
+      <span class="badge ${pClass}">${escapeHtml(idea.platform)}</span>
+      ${typeLabel ? `<span class="${typeBadge}">${typeLabel}</span>` : ''}
     </div>
-    <div class="idea-topic">${escapeHtml(idea.topic)}</div>
     <div class="idea-hook">${escapeHtml(idea.hook)}</div>
-    ${idea.title       ? `<div class="idea-title">${escapeHtml(idea.title)}</div>` : ''}
-    <div class="idea-description">${escapeHtml(idea.description)}</div>
-    <div class="idea-visual"><strong>Canva brief:</strong> ${escapeHtml(idea.visual_brief)}</div>
+    ${idea.title ? `<div class="idea-title">${escapeHtml(idea.title)}</div>` : ''}
+    <div class="idea-desc clamp" onclick="this.classList.toggle('clamp')" title="Click to expand">${escapeHtml(idea.description)}</div>
+    <button class="idea-brief-toggle" onclick="toggleBrief(${idea.id})"><span id="brief-caret-${idea.id}">▸</span> Visual brief</button>
+    <div id="brief-${idea.id}" class="idea-brief"><strong>Canva brief:</strong> ${escapeHtml(idea.visual_brief)}</div>
     <div class="idea-actions">
       <button class="${approveClass}" onclick="toggleApprove(${idea.id})">${approveLabel}</button>
-      <button class="btn-sm" onclick="regenerate(${idea.id})">regenerate</button>
-      <button class="btn-sm" onclick="toggleEdit(${idea.id})">edit</button>
-      <button class="btn-sm" onclick="skipIdea(${idea.id})">skip</button>
+      <button class="btn btn-ghost btn-sm" onclick="skipIdea(${idea.id})">skip</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleEdit(${idea.id})">edit</button>
+      <button class="btn btn-ghost btn-sm" onclick="regenerate(${idea.id})">regenerate</button>
     </div>
     <div id="edit-${idea.id}" style="display:none;" class="edit-box">
-      <label>Hook</label><input type="text" id="hook-${idea.id}" value="${escapeAttr(idea.hook)}" />
-      <label>Title</label><input type="text" id="title-${idea.id}" value="${escapeAttr(idea.title || '')}" />
-      <label>Description</label><textarea id="description-${idea.id}">${escapeHtml(idea.description)}</textarea>
-      <button class="btn-save" onclick="saveEdit(${idea.id})">save changes</button>
+      <label class="lbl">Hook</label><input type="text" id="hook-${idea.id}" value="${escapeAttr(idea.hook)}" />
+      <label class="lbl">Title</label><input type="text" id="title-${idea.id}" value="${escapeAttr(idea.title || '')}" />
+      <label class="lbl">Description</label><textarea id="description-${idea.id}">${escapeHtml(idea.description)}</textarea>
+      <button class="btn btn-green btn-sm" onclick="saveEdit(${idea.id})">save changes</button>
     </div>
   `;
   return div;
+}
+
+function toggleBrief(id) {
+  const el = document.getElementById('brief-' + id);
+  const caret = document.getElementById('brief-caret-' + id);
+  const open = el.classList.toggle('open');
+  if (caret) caret.textContent = open ? '▾' : '▸';
 }
 
 function escapeHtml(s)  { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function escapeAttr(s)  { return escapeHtml(s).replace(/'/g, '&#39;'); }
 
 async function toggleApprove(id) {
-  const idea      = allIdeas.find(i => i.id === id);
+  const idea = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'approved' ? 'pending' : 'approved';
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
   idea.status = newStatus;
   refreshCard(idea);
   updateCounts();
+  renderOverview();
+  if (document.getElementById('view-queue').classList.contains('active')) renderQueue();
 }
 
 async function skipIdea(id) {
-  const idea      = allIdeas.find(i => i.id === id);
+  const idea = allIdeas.find(i => i.id === id);
   if (!idea) return;
   const newStatus = idea.status === 'skipped' ? 'pending' : 'skipped';
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
   idea.status = newStatus;
   refreshCard(idea);
   updateCounts();
+  renderOverview();
+  if (document.getElementById('view-queue').classList.contains('active')) renderQueue();
 }
 
 async function regenerate(id) {
@@ -842,6 +1185,7 @@ async function saveEdit(id) {
   idea.description = document.getElementById('description-' + id).value;
   await fetch(`${API}/ideas/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hook: idea.hook, title: idea.title, description: idea.description }) });
   refreshCard(idea);
+  renderOverview();
 }
 
 function updateCounts() {
@@ -849,62 +1193,112 @@ function updateCounts() {
   const approved = allIdeas.filter(i => i.status === 'approved').length;
   const skipped  = allIdeas.filter(i => i.status === 'skipped').length;
   const pending  = allIdeas.filter(i => i.status === 'pending').length;
-  document.getElementById('queue-count').textContent  = total   ? `(${total})` : '';
-  document.getElementById('s-total').textContent      = total;
-  document.getElementById('s-approved').textContent   = approved;
-  document.getElementById('s-skipped').textContent    = skipped;
-  document.getElementById('s-pending').textContent    = pending;
+  const badge = document.getElementById('queue-count');
+  if (total) { badge.style.display = 'inline-block'; badge.textContent = total; }
+  else badge.style.display = 'none';
+  document.getElementById('s-total').textContent    = total;
+  document.getElementById('s-approved').textContent = approved;
+  document.getElementById('s-skipped').textContent  = skipped;
+  document.getElementById('s-pending').textContent  = pending;
+}
+
+// ── Queue ─────────────────────────────────────────────────────────
+function setQueueFilter(f) {
+  queueFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
+  renderQueue();
 }
 
 function renderQueue() {
+  updateCounts();
+  renderExportCTA();
+
   const list = document.getElementById('queue-list');
-  if (!allIdeas.length) { list.innerHTML = '<div class="empty">No ideas yet. Go to Generate.</div>'; updateCounts(); return; }
-  const sorted = [
+  if (!allIdeas.length) {
+    list.innerHTML = `<div class="empty"><div class="emoji">📭</div><div class="title">No ideas in the queue yet</div><div class="hint">Head to <a href="#" onclick="switchView('generate');return false">Generate</a> to create your first batch of pin ideas.</div></div>`;
+    return;
+  }
+
+  let sorted = [
     ...allIdeas.filter(i => i.status === 'approved'),
     ...allIdeas.filter(i => i.status === 'pending'),
     ...allIdeas.filter(i => i.status === 'skipped')
   ];
+  if (queueFilter !== 'all') sorted = sorted.filter(i => i.status === queueFilter);
+
+  if (!sorted.length) {
+    list.innerHTML = `<div class="empty"><div class="title">No ${queueFilter} ideas</div><div class="hint">Try a different filter.</div></div>`;
+    return;
+  }
   list.innerHTML = '';
   sorted.forEach(idea => list.appendChild(makeCard(idea)));
-  updateCounts();
+}
+
+function renderExportCTA() {
+  const cta = document.getElementById('canva-export-cta');
+  const approved = allIdeas.filter(i => i.status === 'approved').length;
+  if (!approved) { cta.innerHTML = ''; return; }
+  cta.innerHTML = `
+    <button class="btn btn-green btn-lg btn-block" onclick="copyCanvaPrompt()">📋 Export ${approved} approved idea${approved === 1 ? '' : 's'} for Canva</button>
+    <div class="export-sub">Copies a prompt to paste into Claude.ai with the Canva MCP enabled for design generation</div>`;
 }
 
 // ── Canva MCP prompt export ───────────────────────────────────────
 function copyCanvaPrompt() {
   const approved = allIdeas.filter(i => i.status === 'approved');
-  if (!approved.length) {
-    setStatus('No approved ideas yet — approve some ideas first.', 'error');
-    return;
-  }
+  if (!approved.length) return;
 
   const monthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
   const n         = approved.length;
 
-  const ideaList = approved.map((idea, i) =>
-    `${i + 1}. Hook: ${idea.hook}\n   Title: ${idea.title}\n   Description: ${idea.description}`
+  const pinBlocks = approved.map((idea, i) =>
+`━━━ PIN ${i + 1} ━━━
+Hook (large bold text, top of design):
+"${idea.hook}"
+
+Title (medium weight, middle section):
+${idea.title}
+
+Description (smaller text, lower section):
+${idea.description}
+
+Visual note: ${idea.visual_brief}`
   ).join('\n\n');
 
   const prompt =
-`Please create ${n} Pinterest pin${n === 1 ? '' : 's'} for Net Positive Method using Canva.
+`You are a Pinterest pin designer for Net Positive Method, a personal finance brand.
+
+BRAND RULES (apply to every single pin):
+- Clean, minimal, editorial style
+- White or very light background
+- Bold black sans-serif typography
+- Single thin green accent line (#22C55E) near the top
+- No illustrations, clip art, or stock photos
+- Pinterest format (1000x1500px portrait)
+- Brand handle: netpositivemethod.com in small green text at bottom
+- Reference aesthetic: Bloomberg Businessweek, Stripe homepage, Monocle magazine
 
 It is currently ${monthYear}.
+Where relevant, lean into seasonal financial themes.
 
-Style for every pin: clean minimal editorial, white or light background, bold black sans-serif typography, single thin green accent (#22C55E), no illustrations or stock photos, portrait format (1000x1500px), small 'netpositivemethod.com' in green at the bottom.
+I have ${n} approved pin idea${n === 1 ? '' : 's'} below. Please:
+1. Create each pin one at a time using Canva
+2. Show me the design before moving to the next
+3. Wait for my approval or feedback before continuing
+4. Keep all designs consistent with the brand rules above
 
-Create each pin one at a time. Show me the design before moving to the next so I can approve or request changes.
+APPROVED IDEAS:
 
-Here are the ${n} approved idea${n === 1 ? '' : 's'}:
+${pinBlocks}
 
-${ideaList}`;
+Ready? Please start with PIN 1.`;
 
-  // Show preview
   const wrap    = document.getElementById('canva-prompt-wrap');
   const preview = document.getElementById('canva-prompt-preview');
   const confirm = document.getElementById('canva-copy-confirm');
-  preview.value        = prompt;
-  wrap.style.display   = 'block';
+  preview.value      = prompt;
+  wrap.style.display = 'block';
 
-  // Copy to clipboard
   const doCopy = () => {
     confirm.style.display = 'inline';
     setTimeout(() => { confirm.style.display = 'none'; }, 2500);
@@ -912,14 +1306,10 @@ ${ideaList}`;
 
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(prompt).then(doCopy).catch(() => {
-      preview.select();
-      document.execCommand('copy');
-      doCopy();
+      preview.select(); document.execCommand('copy'); doCopy();
     });
   } else {
-    preview.select();
-    document.execCommand('copy');
-    doCopy();
+    preview.select(); document.execCommand('copy'); doCopy();
   }
 }
 
@@ -943,8 +1333,16 @@ async function clearQueue() {
   document.getElementById('canva-prompt-wrap').style.display = 'none';
   renderQueue();
   updateCounts();
+  renderOverview();
 }
 
+// ── Boot ──────────────────────────────────────────────────────────
+const initialView = (location.hash || '').replace('#', '');
+if (initialView) switchView(initialView);
+window.addEventListener('hashchange', () => {
+  const v = (location.hash || '').replace('#', '');
+  if (v) switchView(v);
+});
 loadHealth();
 loadIdeas();
 loadInsights();

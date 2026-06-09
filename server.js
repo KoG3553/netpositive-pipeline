@@ -55,6 +55,10 @@ function saveIdeas() {
 
 let ideasStore = loadIdeas();
 
+// In-memory session counter — ideas generated since this server process started.
+// Resets to 0 on every restart (intentional — "this session" metric).
+let sessionGenerated = 0;
+
 // Windsor insights cache (disk-backed, 6h TTL)
 function loadInsights() {
   try {
@@ -375,9 +379,10 @@ app.get('/api/health', (req, res) => {
     ? Math.round((Date.now() - new Date(cachedPinterestInsights.fetched_at).getTime()) / 3600000) : null;
 
   res.json({
-    status:          'ok',
-    ideas:           ideasStore.length,
-    windsor_key_set: !!WINDSOR_API_KEY,
+    status:            'ok',
+    ideas:             ideasStore.length,
+    session_generated: sessionGenerated,
+    windsor_key_set:   !!WINDSOR_API_KEY,
     instagram: { cached: !!cachedInsights?.insight_text,          age_h: insightsAgeH, posts: cachedInsights?.total_posts          ?? 0 },
     pinterest: { cached: !!cachedPinterestInsights?.insight_text, age_h: pinAgeH,      posts: cachedPinterestInsights?.total_posts ?? 0 }
   });
@@ -473,6 +478,7 @@ Each object must have exactly these fields:
     }));
 
     ideasStore = [...ideas, ...ideasStore];
+    sessionGenerated += ideas.length;
     saveIdeas();
     res.json({ success: true, ideas });
   } catch (err) {
